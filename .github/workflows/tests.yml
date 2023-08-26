@@ -16,7 +16,10 @@ jobs:
         with:
           python-version: "3.10.11"
       - name: Install deps
-        uses: knowsuchagency/poetry-install@v1
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run black check
@@ -30,7 +33,10 @@ jobs:
         with:
           python-version: "3.10.11"
       - name: Install deps
-        uses: knowsuchagency/poetry-install@v1
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run flake8 check
@@ -44,7 +50,10 @@ jobs:
         with:
           python-version: "3.10.11"
       - name: Install deps
-        uses: knowsuchagency/poetry-install@v1
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run mypy check
@@ -72,7 +81,10 @@ jobs:
         with:
           python-version: "3.10.11"
       - name: Install deps
-        uses: knowsuchagency/poetry-install@v1
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run pytest check
