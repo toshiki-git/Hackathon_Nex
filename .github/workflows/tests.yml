@@ -26,8 +26,6 @@ jobs:
           pip install -U pip
           pip install poetry
           poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
       - name: Run black check
         run: poetry run black --check .
   flake8:
@@ -49,8 +47,6 @@ jobs:
           pip install -U pip
           pip install poetry
           poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
       - name: Run flake8 check
         run: poetry run flake8 --count .
   mypy:
@@ -72,8 +68,6 @@ jobs:
           pip install -U pip
           pip install poetry
           poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
       - name: Run mypy check
         run: poetry run mypy .
   pytest:
@@ -109,8 +103,6 @@ jobs:
           pip install -U pip
           pip install poetry
           poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
       - name: Run pytest check
         run: poetry run pytest -vv --cov="api" .
         env:
