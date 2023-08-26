@@ -10,52 +10,49 @@ jobs:
   black:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pipx install poetry
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10.11"
-      - name: Install deps
-        run: |
-          pip install -U pip
-          pip install poetry
-          poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
       - name: Run black check
         run: poetry run black --check .
   flake8:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pipx install poetry
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10.11"
-      - name: Install deps
-        run: |
-          pip install -U pip
-          pip install poetry
-          poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
       - name: Run flake8 check
         run: poetry run flake8 --count .
   mypy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pipx install poetry
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10.11"
-      - name: Install deps
-        run: |
-          pip install -U pip
-          pip install poetry
-          poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
       - name: Run mypy check
         run: poetry run mypy .
   pytest:
@@ -75,18 +72,17 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pipx install poetry
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10.11"
-      - name: Install deps
-        run: |
-          pip install -U pip
-          pip install poetry
-          poetry install
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
       - name: Run pytest check
         run: poetry run pytest -vv --cov="api" .
         env:
