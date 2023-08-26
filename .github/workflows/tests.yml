@@ -49,6 +49,8 @@ jobs:
           poetry install
       - name: Run flake8 check
         run: poetry run flake8 --count .
+      - name: check
+        run: which python
   mypy:
     runs-on: ubuntu-latest
     steps:
@@ -70,6 +72,8 @@ jobs:
           poetry install
       - name: Run mypy check
         run: poetry run mypy .
+      - name: check
+        run: where python
   pytest:
     runs-on: ubuntu-latest
     services:
