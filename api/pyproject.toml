@@ -11,7 +11,7 @@ maintainers = [
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 fastapi = "^0.100.0"
 uvicorn = { version = "^0.22.0", extras = ["standard"] }
 pydantic = "^2"
@@ -24,8 +24,6 @@ asyncpg = {version = "^0.28.0", extras = ["sa"]}
 redis = {version = "^4.6.0", extras = ["hiredis"]}
 aiofiles = "^23.1.0"
 httptools = "^0.6.0"
-prometheus-client = "^0.17.0"
-prometheus-fastapi-instrumentator = "6.0.0"
 loguru = "^0.7.0"
 
 
@@ -79,6 +77,7 @@ filterwarnings = [
 env = [
     "API_ENVIRONMENT=pytest",
     "API_DB_BASE=api_test",
+    "POETRY_VIRTUALENVS_IN_PROJECT=true"
 ]
 
 [fastapi-template.options]
@@ -98,7 +97,7 @@ traefik_labels = "None"
 add_dummy = "True"
 orm = "sqlalchemy"
 self_hosted_swagger = "True"
-prometheus_enabled = "True"
+prometheus_enabled = "None"
 sentry_enabled = "None"
 otlp_enabled = "None"
 pydanticv1 = "None"

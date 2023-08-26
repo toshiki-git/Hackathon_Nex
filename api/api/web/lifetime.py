@@ -1,9 +1,6 @@
 from typing import Awaitable, Callable
 
 from fastapi import FastAPI
-from prometheus_fastapi_instrumentator.instrumentation import (
-    PrometheusFastApiInstrumentator,
-)
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from api.services.redis.lifetime import init_redis, shutdown_redis
@@ -29,17 +26,6 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     app.state.db_session_factory = session_factory
 
 
-def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
-    """
-    Enables prometheus integration.
-
-    :param app: current application.
-    """
-    PrometheusFastApiInstrumentator(should_group_status_codes=False).instrument(
-        app,
-    ).expose(app, should_gzip=True, name="prometheus_metrics")
-
-
 def register_startup_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
@@ -58,7 +44,6 @@ def register_startup_event(
         app.middleware_stack = None
         _setup_db(app)
         init_redis(app)
-        setup_prometheus(app)
         app.middleware_stack = app.build_middleware_stack()
         pass  # noqa: WPS420
 

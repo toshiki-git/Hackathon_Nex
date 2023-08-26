@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     db_port: int = 5432
     db_user: str = "api"
     db_pass: str = "api"
-    db_base: str = "api"
+    db_base: Optional[str] = None
     db_echo: bool = False
 
     # Variables for Redis
@@ -54,10 +54,6 @@ class Settings(BaseSettings):
     redis_user: Optional[str] = None
     redis_pass: Optional[str] = None
     redis_base: Optional[int] = None
-
-    # This variable is used to define
-    # multiproc_dir. It's required for [uvi|guni]corn projects.
-    prometheus_dir: Path = TEMP_DIR / "prom"
 
     @property
     def db_url(self) -> URL:
@@ -95,7 +91,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file="../.env",
         env_prefix="API_",
         env_file_encoding="utf-8",
     )
