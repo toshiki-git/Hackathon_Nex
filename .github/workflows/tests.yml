@@ -2,6 +2,10 @@ name: Testing api
 
 on: push
 
+defaults:
+  run:
+    working-directory: api
+
 jobs:
   black:
     runs-on: ubuntu-latest
