@@ -23,4 +23,4 @@ async def get_redis_pool(
     :param request: current request.
     :returns:  redis connection pool.
     """
-    return request.app.state.redis_pool
+    return request.app.state.redis_pool # type: ignore
