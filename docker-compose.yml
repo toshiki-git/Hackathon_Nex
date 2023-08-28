@@ -1,5 +1,9 @@
 version: "3"
 
+volumes:
+  node_modules:
+  venv:
+
 services:
   api:
     container_name: app-api
@@ -19,6 +23,7 @@ services:
         condition: service_healthy
     volumes:
       - ./api:/app
+      - venv:/app/.venv
     environment:
       API_HOST: 0.0.0.0
       API_PORT: 8000
@@ -26,7 +31,7 @@ services:
       API_DB_PORT: 5432
       API_DB_USER: geekcamp
       API_DB_PASS: geekcamp
-      API_DB_BASE: app_name
+      API_DB_BASE: night_g
       API_REDIS_HOST: api-redis
       API_REDIS_PORT: 6379
       API_REDIS_USER: geekcamp
@@ -53,16 +58,18 @@ services:
     container_name: app-db
     image: postgres:15.4-bullseye
     hostname: api-db
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: geekcamp
       POSTGRES_PASSWORD: geekcamp
-      POSTGRES_DB: app_name
+      POSTGRES_DB: night_g
       encoding: utf8
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./.db_data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: pg_isready -U geekcamp -d app_name
+      test: pg_isready -U geekcamp -d night_g
       interval: 2s
       timeout: 3s
       retries: 40
@@ -71,13 +78,13 @@ services:
     container_name: app-migrator
     image: api:${API_VERSION:-latest}
     restart: no
-    command: alembic upgrade head
+    command: /app/.venv/bin/python -m alembic upgrade head
     environment:
       API_DB_HOST: api-db
       API_DB_PORT: 5432
       API_DB_USER: geekcamp
       API_DB_PASS: geekcamp
-      API_DB_BASE: app_name
+      API_DB_BASE: night_g
     depends_on:
       db:
         condition: service_healthy
@@ -94,17 +101,9 @@ services:
       - "6379:6379"
       - "8001:8001"
     volumes:
-      - redis_data:/data
+      - ./.redis_data:/data
     healthcheck:
       test: redis-cli ping
       interval: 1s
       timeout: 3s
       retries: 50
-
-volumes:
-  db_data:
-    name: db_data
-  redis_data:
-    name: redis_data
-  node_modules:
-    name: node_modules
