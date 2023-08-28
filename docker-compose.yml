@@ -1,7 +1,39 @@
+version: "3"
+
 services:
+  api:
+    container_name: app-api
+    build:
+      context: ./api/
+      target: dev
+    ports:
+      - "8000:8000"
+    image: api:${API_VERSION:-latest}
+    restart: always
+    depends_on:
+      web:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      API_DB_HOST: api-db
+      API_DB_PORT: 5432
+      API_DB_USER: geekcamp
+      API_DB_PASS: geekcamp
+      API_DB_BASE: app_name
+      API_REDIS_HOST: api-redis
+      API_REDIS_PORT: 6379
+      API_REDIS_USER: geekcamp
+      API_REDIS_PASS: geekcamp
+      API_REDIS_INSIGHT_PORT: 8001
+
   web:
-    image: next-app
-    container_name: next-app
+    container_name: app-web
+    image: app-next
     build:
       context: ./web/
     ports:
@@ -14,3 +46,59 @@ services:
     stdin_open: true
     environment:
       - CHOKIDAR_USEPOLLING=true
+
+  db:
+    container_name: app-db
+    image: postgres:15.4-bullseye
+    hostname: api-db
+    environment:
+      POSTGRES_USER: geekcamp
+      POSTGRES_PASSWORD: geekcamp
+      POSTGRES_DB: app_name
+      encoding: utf8
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U geekcamp -d app_name
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    container_name: app-migrator
+    image: api:${API_VERSION:-latest}
+    restart: no
+    command: alembic upgrade head
+    environment:
+      API_DB_HOST: api-db
+      API_DB_PORT: 5432
+      API_DB_USER: geekcamp
+      API_DB_PASS: geekcamp
+      API_DB_BASE: app_name
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    container_name: app-redis-stack
+    image: redis/redis-stack:latest
+    restart: always
+    environment:
+      REDIS_ARGS: "--requirepass geekcamp --user geekcamp on >geekcamp ~* allcommands --user default off nopass nocommands"
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+volumes:
+  db_data:
+    name: db_data
+  redis_data:
+    name: redis_data
