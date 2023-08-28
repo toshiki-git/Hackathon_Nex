@@ -37,6 +37,7 @@ services:
       API_REDIS_USER: geekcamp
       API_REDIS_PASS: geekcamp
       API_REDIS_INSIGHT_PORT: 8001
+      API_RELOAD: true
 
   web:
     container_name: app-web
