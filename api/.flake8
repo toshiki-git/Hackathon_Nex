@@ -72,6 +72,8 @@ ignore =
   WPS473,
   ; too many no-cover comments.
   WPS403,
+  ; Found magic number
+  WPS432,
 
 per-file-ignores =
   ; all tests

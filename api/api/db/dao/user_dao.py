@@ -1,8 +1,8 @@
 from fastapi import Depends
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.dependencies import get_db_session
+
 
 class UserDAO:
     """Class for accessing users table."""
