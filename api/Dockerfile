@@ -24,7 +24,7 @@ RUN apt-get purge -y \
 COPY . /app
 RUN poetry install --only main
 
-CMD ["/app/.venv/bin/python", "-m", "api"]
+CMD ["/bin/bash", "-c", "poetry install && /app/.venv/bin/python -m api"]
 
 FROM prod as dev
 
