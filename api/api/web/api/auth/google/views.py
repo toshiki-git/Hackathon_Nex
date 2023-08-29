@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Request, Response, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from loguru import logger
 
@@ -13,7 +13,7 @@ logger = logger.bind(task="GoogleAuth")
 
 
 @router.get("/login")
-async def google_login(request: Request) -> Union[RedirectResponse, JSONResponse]:
+async def google_login(request: Request) -> Response:
     """Generate login url and redirect.
 
     :param request: Request object of fastAPI
