@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     redis_pass: Optional[str] = None
     redis_base: Optional[int] = None
 
+    # OAuth credentials
+    google_client_id: Optional[str] = None
+    google_client_secret: Optional[str] = None
+
     @property
     def db_url(self) -> URL:
         """
@@ -91,7 +95,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_prefix="API_",
         env_file_encoding="utf-8",
     )
