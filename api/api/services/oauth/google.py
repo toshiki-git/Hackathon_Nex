@@ -94,7 +94,7 @@ def auth_url(
         if isinstance(value, list):
             params[param] = urllib.parse.quote(" ".join(value))
 
-    params = [f"{p}={v}" for p, v in params.items()] # type: ignore
+    params = [f"{p}={v}" for p, v in params.items()]  # type: ignore
     parameters = "&".join(params)
 
     return google_auth_url + parameters
