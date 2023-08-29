@@ -83,7 +83,7 @@ def auth_url(
     if not static.GOOGLE_AUTH_URL.endswith("?"):
         google_auth_url = f"{static.GOOGLE_AUTH_URL}?"
 
-    params = {
+    params: Dict[str, str | List[str]] = {
         "client_id": client_id,
         "redirect_uri": redirect_uri,
         "response_type": response_type,
@@ -94,7 +94,7 @@ def auth_url(
         if isinstance(value, list):
             params[param] = urllib.parse.quote(" ".join(value))
 
-    params = [f"{p}={v}" for p, v in params.items()]
+    params = [f"{p}={v}" for p, v in params.items()] # type: ignore
     parameters = "&".join(params)
 
     return google_auth_url + parameters

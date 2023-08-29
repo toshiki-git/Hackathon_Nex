@@ -13,7 +13,7 @@ logger = logger.bind(task="GoogleAuth")
 
 
 @router.get("/login")
-async def google_login(request: Request) -> RedirectResponse:
+async def google_login(request: Request) -> RedirectResponse | JSONResponse:
     """Generate login url and redirect.
 
     :param request: Request object of fastAPI
@@ -38,7 +38,7 @@ async def google_login(request: Request) -> RedirectResponse:
     return RedirectResponse(
         google.auth_url(
             settings.google_client_id,
-            redirect_uri=request.url_for("google_callback"),
+            redirect_uri=str(request.url_for("google_callback")),
         ),
     )
 
@@ -63,7 +63,7 @@ async def google_callback(request: Request, code: Optional[str] = None) -> JSONR
             code=code,
             client_id=settings.google_client_id,
             client_secret=settings.google_client_secret,
-            redirect_uri=request.url_for("google_callback"),
+            redirect_uri=str(request.url_for("google_callback")),
         )
         logger.info("Success to retrieve access token from Google API.")
     except google.FaildRetrieveAccessTokenError:
