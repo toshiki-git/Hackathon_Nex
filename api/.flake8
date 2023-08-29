@@ -74,6 +74,12 @@ ignore =
   WPS403,
   ; Found magic number
   WPS432,
+  ; max local variables
+  WPS210,
+  ; Found line with high Jones Complexity
+  WPS221,
+  ; Found too short name
+  WPS111,
 
 per-file-ignores =
   ; all tests

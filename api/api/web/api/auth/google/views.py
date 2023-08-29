@@ -37,7 +37,8 @@ async def google_login(request: Request) -> RedirectResponse:
     logger.info("Success to generate login url and redirect.")
     return RedirectResponse(
         google.auth_url(
-            settings.google_client_id, redirect_uri=request.url_for("google_callback"),
+            settings.google_client_id,
+            redirect_uri=request.url_for("google_callback"),
         ),
     )
 
