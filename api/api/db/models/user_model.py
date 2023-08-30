@@ -11,5 +11,5 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(length=200))
+    username: Mapped[str] = mapped_column(String(length=50))
     email: Mapped[EmailType] = mapped_column(EmailType, unique=True)
