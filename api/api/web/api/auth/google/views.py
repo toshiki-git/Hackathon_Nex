@@ -1,12 +1,15 @@
 from typing import Optional
+from urllib.parse import urlencode, urljoin
 
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from loguru import logger
 
-from api.services.oauth import google
+from api.db.dao.token_dao import TokenDAO
+from api.db.dao.user_dao import UserDAO
+from api.services.oauth import NotVerifiedEmailError, google
 from api.settings import settings
-from api.utils import json_err_content
+from api.utils.response import json_err_content
 
 router = APIRouter()
 logger = logger.bind(task="GoogleAuth")
@@ -44,12 +47,22 @@ async def google_login(request: Request) -> Response:
 
 
 @router.get("/callback")
-async def google_callback(request: Request, code: Optional[str] = None) -> JSONResponse:
-    """Process login response from Google and return user info.
+async def google_callback(
+    request: Request,
+    code: Optional[str] = None,
+    user_dao: UserDAO = Depends(),
+    token_dao: TokenDAO = Depends(),
+) -> Response:
+    """Process login response from Google.
+
+    When a login or registration is successful,
+    you will be automatically logged in via a URL with query parameters.
 
     :param request: Request object of fastAPI.
     :param code: String will be use to retrieve access token.
-    :returns: Returns user info or BadRequest(400) when code is not valid.
+    :returns:
+        Redirect to login url or response
+        BadRequest(400) when code is not valid.
     """
     if code is None:
         logger.error("Google login failed")
@@ -77,4 +90,29 @@ async def google_callback(request: Request, code: Optional[str] = None) -> JSONR
             ),
         )
 
-    return JSONResponse(await google.get_user_info(access_token))
+    user_info = await google.get_user_info(access_token)
+    user_email = user_info["email"]
+    user_email_domain = user_email.split("@")[1]
+
+    if not user_info["verified_email"]:
+        raise NotVerifiedEmailError(
+            status_code=400, detail="Your google is not verified email address."
+        )
+
+    if await user_dao.is_email_exists(email=user_email):
+        user = await user_dao.get_user_by_email(email=user_email)
+        if user is not None:
+            user_id = user.id
+        else:
+            logger.critical("Not found user at Google Auth View.")
+            raise TypeError("Not found User.")
+    else:
+        user_id = await user_dao.create_user(
+            username=user_info["name"], email=user_email
+        )
+        logger.info("Created new user: xxxx@{}".format(user_email_domain))
+
+    query = {"key_token": await token_dao.create_token(user_id=user_id)}
+    return RedirectResponse(
+        str(urljoin(settings.web_url, "callback")) + "?" + urlencode(query)
+    )
