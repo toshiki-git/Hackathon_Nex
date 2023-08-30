@@ -27,6 +27,7 @@ services:
     environment:
       API_HOST: 0.0.0.0
       API_PORT: 8000
+      API_WEB_URL: http://localhost:3000
       API_DB_HOST: api-db
       API_DB_PORT: 5432
       API_DB_USER: geekcamp
@@ -38,6 +39,8 @@ services:
       API_REDIS_PASS: geekcamp
       API_REDIS_INSIGHT_PORT: 8001
       API_RELOAD: true
+      API_TOKEN_SECRET_KEY: night_g_secret_key_something
+      API_TOKEN_ALGORITHM: HS256
 
   web:
     container_name: app-web
