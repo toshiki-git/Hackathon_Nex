@@ -1,3 +1,4 @@
 .DS_Store
 .db_data
 .redis_data
+.env

@@ -30,6 +30,9 @@ class Settings(BaseSettings):
 
     host: str = "127.0.0.1"
     port: int = 8000
+
+    web_url: str = "http://127.0.0.1:3000"
+
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
@@ -54,6 +57,14 @@ class Settings(BaseSettings):
     redis_user: Optional[str] = None
     redis_pass: Optional[str] = None
     redis_base: Optional[int] = None
+
+    # OAuth credentials
+    google_client_id: Optional[str] = None
+    google_client_secret: Optional[str] = None
+
+    # token credentials
+    token_algorithm: str = ""
+    token_secret_key: str = "night_g_some_secret_key"
 
     @property
     def db_url(self) -> URL:
@@ -91,7 +102,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_prefix="API_",
         env_file_encoding="utf-8",
     )

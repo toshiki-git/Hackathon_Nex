@@ -74,6 +74,17 @@ ignore =
   WPS403,
   ; Found magic number
   WPS432,
+  ; max local variables
+  WPS210,
+  ; Found line with high Jones Complexity
+  WPS221,
+  ; Found too short name
+  WPS111,
+  ; Found shadowed class attribute:
+  WPS601,
+  ; comparison to False should be 'if cond is False:' or 'if not cond:
+  ; When use sqlalchemy it's will be annoying
+  E712,
 
 per-file-ignores =
   ; all tests
