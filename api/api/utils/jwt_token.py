@@ -7,35 +7,64 @@ from api.settings import settings
 
 
 def create_token(data: Dict[str, Any], expires_delta: (timedelta | None) = None) -> str:
-    data_encode = data.copy()
+    """Fucntion to create a new JWT token.
+
+    This function generates a JSON Web Token (JWT)
+    with the provided data and an optional expiration time.
+
+    :param data: Data to be stored in the token.
+    :param expires_delta: Optional timedelta for token expiration (default: 15 minutes).
+    :returns: A new JWT token as a string.
+    """
+    data_dict = data.copy()
 
     if expires_delta is not None:
         expires = datetime.utcnow() + expires_delta
     else:
         expires = datetime.utcnow() + timedelta(minutes=15)
 
-    data_encode.update({"exp": expires})
+    data_dict.update({"exp": expires})
 
-    encoded_jwt = jwt.encode(
-        data_encode, settings.token_secret_key, algorithm=settings.token_algorithm
+    return jwt.encode(
+        data_dict,
+        settings.token_secret_key,
+        algorithm=settings.token_algorithm,
     )
-    return encoded_jwt
 
 
 def check_token(token: str) -> (Dict[str, Any] | None):
+    """Check the validity of a JWT token.
+
+    This function decodes and verifies the provided JWT token
+    and returns its payload if the token is valid.
+
+    :param token: The JWT token to be checked.
+    :returns: The payload of the JWT token if valid. or None if token is invalid.
+    """
     try:
-        payload = jwt.decode(
-            token, settings.token_secret_key, algorithms=[settings.token_algorithm]
+        return jwt.decode(
+            token,
+            settings.token_secret_key,
+            algorithms=[settings.token_algorithm],
         )
-        return payload
     except (JWTError, ExpiredSignatureError):
         return None
 
 
 def is_valid(token: str) -> bool:
+    """Check if a JWT token is valid.
+
+    This function checks the validity of the provided JWT token
+    without returning its payload.
+
+    :param token: The JWT token to be checked.
+    :returns: True if the JWT token is valid
+    """
     try:
-        payload = jwt.decode(
-            token, settings.token_secret_key, algorithms=[settings.token_algorithm]
+        jwt.decode(
+            token,
+            settings.token_secret_key,
+            algorithms=[settings.token_algorithm],
         )
         return True
     except (JWTError, ExpiredSignatureError):

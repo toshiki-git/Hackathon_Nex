@@ -60,6 +60,9 @@ async def google_callback(
 
     :param request: Request object of fastAPI.
     :param code: String will be use to retrieve access token.
+    :param user_dao: UserDAO Object
+    :param token_dao: TokenDAO Object
+    :raises NotVerifiedEmailError: If not verified email
     :returns:
         Redirect to login url or response
         BadRequest(400) when code is not valid.
@@ -96,23 +99,25 @@ async def google_callback(
 
     if not user_info["verified_email"]:
         raise NotVerifiedEmailError(
-            status_code=400, detail="Your google is not verified email address."
+            status_code=400,
+            detail="Your google is not verified email address.",
         )
 
-    if await user_dao.is_email_exists(email=user_email):
-        user = await user_dao.get_user_by_email(email=user_email)
-        if user is not None:
-            user_id = user.id
-        else:
-            logger.critical("Not found user at Google Auth View.")
-            raise TypeError("Not found User.")
+    user = await user_dao.get_user_by_email(email=user_email)
+
+    if user is not None:
+        user_id = user.id
     else:
         user_id = await user_dao.create_user(
-            username=user_info["name"], email=user_email
+            username=user_info["name"],
+            email=user_email,
         )
-        logger.info("Created new user: xxxx@{}".format(user_email_domain))
+        logger.info("Created new user: xxxx@{0}".format(user_email_domain))
 
     query = {"key_token": await token_dao.create_token(user_id=user_id)}
     return RedirectResponse(
-        str(urljoin(settings.web_url, "callback")) + "?" + urlencode(query)
+        "{0}?{1}".format(
+            urljoin(settings.web_url, "callback"),
+            urlencode(query),
+        ),
     )
