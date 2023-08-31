@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
 
+from jose import ExpiredSignatureError, JWTError, jwt
+
+from api.settings import settings
+
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import NoResultFound
@@ -96,12 +100,74 @@ async def generate_token(
 
 # TODO: Tokenのリフレッシュ機能をここの関数にて定義
 @router.post("/token/refresh")
-async def generate_jwt_token(request: Request, token_dto: JWTTokenPostDTO) -> None:
+async def generate_jwt_token(
+    request: Request,
+    token_dto: JWTTokenPostDTO,
+    user_dao: UserDAO = Depends(),
+) -> dict:
     """Function to generate a JWT token from refresh token.
     :param request: Request object of FastAPI
     :param token_dto: JWTTokenPostDTO object
     """
-    pass
+    try:
+        payload = jwt.decode(
+            token_dto.refresh_token,
+            settings.token_secret_key,
+            algorithms=[settings.token_algorithm],
+        )
+        
+        if payload["token_type"] == "normal":
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content=json_err_content(
+                    401,
+                    "Invalid token",
+                    "This is a normal token"
+                )
+            )
+        
+        user = await user_dao.get_user(payload["user_id"])
+        if user is not None:          
+            return JSONResponse(
+                {
+                    "token": create_token(
+                        data={
+                            "token_type": "normal",
+                            "user_id": user.id,
+                            "email": user.email,
+                            "username": user.username,
+                        }
+                    )
+                }
+            )
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content=json_err_content(
+                    401,
+                    "Invalid user_id",
+                    "Your refresh token is invalid",
+                ),
+        )
+    except ExpiredSignatureError:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content=json_err_content(
+                401,
+                "Token has expired",
+                "Your refresh token has expired",
+            ),
+        )
+    except JWTError:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content=json_err_content(
+                401,
+                "Invalid token",
+                "Your refresh token is invalid",
+            ),
+        )
+
 
 
 # NOTE: この関数はテスト用関数で、削除予定

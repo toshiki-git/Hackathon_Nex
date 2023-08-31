@@ -12,4 +12,4 @@ class KeyTokenPostDTO(BaseModel):
 class JWTTokenPostDTO(BaseModel):
     """DTO for when responce JWT token."""
 
-    token: str
+    refresh_token: str
