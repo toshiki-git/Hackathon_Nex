@@ -18,9 +18,9 @@ async def jwt_verify(
             algorithms=[settings.token_algorithm],
         )
         user_id = payload["user_id"]
-        user = await user_dao.get_user(user_id) 
+        user = await user_dao.get_user(payload["user_id"])
         
-        if user is None:
+        if  user is None:
             raise HTTPException(status_code=401, detail="non existent user")
         
         if await user_dao.is_email_exists(email=payload["email"]):
