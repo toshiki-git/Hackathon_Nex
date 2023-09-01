@@ -8,7 +8,7 @@ from typing import Union, Dict
 async def jwt_verify(
     jwt_token: Union[str, None] = Header(default=None),
     user_dao: UserDAO = Depends(),
-) -> Dict[str, Union[int, bool]]:
+) -> Dict[str, bool]:
     try:
         if jwt_token is None:
             raise HTTPException(status_code=401, detail="Authorization header is missing")
