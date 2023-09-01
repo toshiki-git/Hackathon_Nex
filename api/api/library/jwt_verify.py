@@ -2,16 +2,16 @@ from fastapi import  HTTPException, Depends, Header, Response
 from jose import ExpiredSignatureError, JWTError, jwt
 from api.db.dao.user_dao import UserDAO
 from api.settings import settings
-from typing import Union
+from typing import Union, Dict
 
 
 async def jwt_verify(
     jwt_token: Union[str, None] = Header(default=None),
     user_dao: UserDAO = Depends(),
-) -> Union[Response,dict]:
+) -> Dict[str, Union[int, bool]]:
     try:
         if jwt_token is None:
-            return HTTPException(status_code=401, detail="Authorization header is missing")
+            raise HTTPException(status_code=401, detail="Authorization header is missing")
         
         payload = jwt.decode(
             jwt_token,
