@@ -12,7 +12,7 @@ from loguru import logger
 from api.db.dao.token_dao import TokenDAO
 from api.db.dao.user_dao import UserDAO
 from api.static import static
-from api.utils.jwt_token import create_token
+from api.lib.jwt_token import create_token
 from api.utils.response import json_err_content
 from api.web.api.token.schema import JWTTokenPostDTO, KeyTokenPostDTO
 
