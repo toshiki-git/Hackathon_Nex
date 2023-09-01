@@ -49,7 +49,7 @@ def check_token(token: str) -> (Dict[str, Any] | None):
         )
     except (JWTError, ExpiredSignatureError):
         return None
-awdadada
+
 
 def is_valid(token: str) -> bool:
     """Check if a JWT token is valid.
