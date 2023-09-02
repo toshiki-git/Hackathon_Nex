@@ -8,10 +8,8 @@ from api.settings import settings
 
 def create_token(data: Dict[str, Any], expires_delta: (timedelta | None) = None) -> str:
     """Fucntion to create a new JWT token.
-
     This function generates a JSON Web Token (JWT)
     with the provided data and an optional expiration time.
-
     :param data: Data to be stored in the token.
     :param expires_delta: Optional timedelta for token expiration (default: 15 minutes).
     :returns: A new JWT token as a string.
@@ -34,10 +32,8 @@ def create_token(data: Dict[str, Any], expires_delta: (timedelta | None) = None)
 
 def check_token(token: str) -> (Dict[str, Any] | None):
     """Check the validity of a JWT token.
-
     This function decodes and verifies the provided JWT token
     and returns its payload if the token is valid.
-
     :param token: The JWT token to be checked.
     :returns: The payload of the JWT token if valid. or None if token is invalid.
     """
@@ -53,10 +49,8 @@ def check_token(token: str) -> (Dict[str, Any] | None):
 
 def is_valid(token: str) -> bool:
     """Check if a JWT token is valid.
-
     This function checks the validity of the provided JWT token
     without returning its payload.
-
     :param token: The JWT token to be checked.
     :returns: True if the JWT token is valid
     """

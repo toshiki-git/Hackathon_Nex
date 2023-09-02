@@ -10,7 +10,7 @@ from api.db.dao.token_dao import TokenDAO
 from api.db.dao.user_dao import UserDAO
 from api.settings import settings
 from api.static import static
-from api.utils.jwt_token import create_token
+from api.library.jwt_token import create_token
 from api.utils.response import json_err_content
 from api.web.api.token.schema import JWTTokenPostDTO, KeyTokenPostDTO
 

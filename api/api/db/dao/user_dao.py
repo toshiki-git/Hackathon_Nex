@@ -17,7 +17,7 @@ class UserDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def get_user(self, user_id: int) -> Optional[UserModel]:
+    async def get_user(self, id: int) -> Optional[UserModel]:
         """Function can get the user from user_id.
 
         If not found, return None
