@@ -15,6 +15,7 @@
   "extends": [
     "eslint:recommended",
     "next/core-web-vitals",
+    "plugin:import/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "airbnb",
