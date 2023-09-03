@@ -1,4 +1,3 @@
-"""Redis API."""
-from api.web.api.redis.views import router
+from api.web.api.timeline.public.views import router
 
 __all__ = ["router"]
