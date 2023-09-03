@@ -7,6 +7,17 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react';
+
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from '@nextui-org/react';
+
 import { GrMoreVertical } from 'react-icons/gr';
 import { TbLogout2 } from 'react-icons/tb';
 import {
@@ -55,6 +66,7 @@ headerItemList.forEach((headerItem) => {
 
 const Header = () => {
   const { theme } = useTheme();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <header className="header bg-overlay border-slate-600">
       <div className="header__items">
@@ -95,6 +107,7 @@ const Header = () => {
             プロフィール
           </DropdownItem>
           <DropdownItem
+            onPress={onOpen}
             key="edit"
             startContent={<IoSettingsSharp />}
           >
@@ -123,6 +136,60 @@ const Header = () => {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
+
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        backdrop="blur"
+        size="sm"
+        placement="center"
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                アカウント設定
+              </ModalHeader>
+              <ModalBody>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit. Nullam pulvinar risus non
+                  risus hendrerit venenatis. Pellentesque
+                  sit amet hendrerit risus, sed porttitor
+                  quam.
+                </p>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit. Nullam pulvinar risus non
+                  risus hendrerit venenatis. Pellentesque
+                  sit amet hendrerit risus, sed porttitor
+                  quam.
+                </p>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit. Nullam pulvinar risus non
+                  risus hendrerit venenatis. Pellentesque
+                  sit amet hendrerit risus, sed porttitor
+                  quam.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </header>
   );
 };
