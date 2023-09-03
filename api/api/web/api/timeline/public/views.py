@@ -18,7 +18,7 @@ async def timeline_post(
     
     return await timeline_dao.get_timeline_posts(limit=limit, offset=offset)
 
-@router.put("/")
+@router.post("/")
 async def create_dummy_model(
     new_timeline_object: TimelinePostsDTO,
     timeline_dao: TimelinePostsDAO = Depends(),
