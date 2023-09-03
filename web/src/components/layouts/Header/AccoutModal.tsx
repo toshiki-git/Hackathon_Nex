@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Modal,
   ModalContent,
@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from '@nextui-org/react';
+} from "@nextui-org/react";
 
 type AccoutModalProps = {
   isOpen: boolean;
@@ -14,11 +14,7 @@ type AccoutModalProps = {
   onClose: () => void;
 };
 
-const AccoutModal: React.FC<AccoutModalProps> = ({
-  isOpen,
-  onOpen,
-  onClose,
-}) => {
+const AccoutModal: React.FC<AccoutModalProps> = ({ isOpen, onOpen, onClose }) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -31,9 +27,7 @@ const AccoutModal: React.FC<AccoutModalProps> = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              アカウント設定
-            </ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">アカウント設定</ModalHeader>
             <ModalBody>
               <div className="icon-change-form mb-6">
                 <label
@@ -71,11 +65,7 @@ const AccoutModal: React.FC<AccoutModalProps> = ({
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button
-                color="danger"
-                variant="light"
-                onPress={onClose}
-              >
+              <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
               <Button color="primary" onPress={onClose}>
