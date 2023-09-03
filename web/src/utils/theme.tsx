@@ -1,20 +1,18 @@
-'use client';
-
-import { useTheme } from 'next-themes';
+import { useTheme } from "next-themes";
 
 const useSwitchTheme = () => {
   const { theme, setTheme } = useTheme();
 
   function switchTheme() {
     switch (theme) {
-      case 'dark':
-        setTheme('light');
+      case "dark":
+        setTheme("light");
         break;
-      case 'light':
-        setTheme('dark');
+      case "light":
+        setTheme("dark");
         break;
       default:
-        setTheme('dark');
+        setTheme("dark");
         break;
     }
   }

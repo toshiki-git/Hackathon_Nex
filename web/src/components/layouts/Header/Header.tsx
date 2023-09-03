@@ -1,4 +1,3 @@
-import useSwitchTheme from '@/app/_utils/theme';
 import {
   User,
   Avatar,
@@ -6,59 +5,63 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from '@nextui-org/react';
-import { GrMoreVertical } from 'react-icons/gr';
-import { TbLogout2 } from 'react-icons/tb';
+} from "@nextui-org/react";
+import { GrMoreVertical } from "react-icons/gr";
+import { TbLogout2 } from "react-icons/tb";
 import {
   BsFillPersonFill,
   BsMoonStarsFill,
   BsFillSunFill,
   BsBellFill,
   BsSearch,
-} from 'react-icons/bs';
-import {
-  IoSettingsSharp,
-  IoGameController,
-} from 'react-icons/io5';
-import { useTheme } from 'next-themes';
-import React from 'react';
-import MenuTab from './HeaderItem';
+} from "react-icons/bs";
+import { IoSettingsSharp, IoGameController } from "react-icons/io5";
+import { useTheme } from "next-themes";
+import React from "react";
+
+import useSwitchTheme from "@/utils/theme";
+import MenuTab from "./HeaderItem";
 
 const headerItemList = [
   {
-    name: 'タイムライン',
+    id: 1,
+    name: "タイムライン",
     icon: <IoGameController />,
-    url: '/home',
+    url: "/home",
   },
   {
-    name: '通知',
+    id: 2,
+    name: "通知",
     icon: <BsBellFill />,
-    url: '/notification',
+    url: "/notification",
   },
   {
-    name: '検索',
+    id: 3,
+    name: "検索",
     icon: <BsSearch />,
-    url: '/search',
+    url: "/search",
   },
 ];
 
-const headerReactNodeList: React.ReactNode[] = [];
-headerItemList.forEach((headerItem) => {
-  headerReactNodeList.push(
+const HeaderItem = () => {
+  const headerReactNodeList = headerItemList.map((headerItem) => (
     <MenuTab
+      key={headerItem.id}
       name={headerItem.name}
       icon={headerItem.icon}
       url={headerItem.url}
     />
-  );
-});
+  ));
+
+  return headerReactNodeList;
+};
 
 const Header = () => {
   const { theme } = useTheme();
   return (
     <header className="header bg-overlay border-slate-600">
       <div className="header__items">
-        {headerReactNodeList}
+        <HeaderItem />
       </div>
       <Dropdown>
         <DropdownTrigger>
@@ -67,12 +70,12 @@ const Header = () => {
               <User
                 name="Junior Garcia"
                 classNames={{
-                  wrapper: 'pl-3',
-                  description: 'text-primary',
+                  wrapper: "pl-3",
+                  description: "text-primary",
                 }}
                 description="@jrgarciadev"
                 avatarProps={{
-                  src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
+                  src: "https://avatars.githubusercontent.com/u/30373425?v=4",
                 }}
               />
               <GrMoreVertical size={20} />
@@ -84,32 +87,17 @@ const Header = () => {
             />
           </div>
         </DropdownTrigger>
-        <DropdownMenu
-          variant="faded"
-          aria-label="Static Actions"
-        >
-          <DropdownItem
-            key="profile"
-            startContent={<BsFillPersonFill />}
-          >
+        <DropdownMenu variant="faded" aria-label="Static Actions">
+          <DropdownItem key="profile" startContent={<BsFillPersonFill />}>
             プロフィール
           </DropdownItem>
-          <DropdownItem
-            key="edit"
-            startContent={<IoSettingsSharp />}
-          >
+          <DropdownItem key="edit" startContent={<IoSettingsSharp />}>
             アカウント設定
           </DropdownItem>
           <DropdownItem
             key="copy"
             onClick={useSwitchTheme()}
-            startContent={
-              theme === 'dark' ? (
-                <BsFillSunFill />
-              ) : (
-                <BsMoonStarsFill />
-              )
-            }
+            startContent={theme === "dark" ? <BsFillSunFill /> : <BsMoonStarsFill />}
           >
             テーマ変更
           </DropdownItem>
