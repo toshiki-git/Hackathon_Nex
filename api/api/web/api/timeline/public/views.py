@@ -5,11 +5,11 @@ from fastapi.param_functions import Depends
 
 from api.db.models.timeline_posts_model import TimelinePostsModel
 from api.db.dao.timeline_posts import TimelinePostsDAO
-from api.web.api.timeline.public.schema import TimelinePostsSchema
+from api.web.api.timeline.public.schema import TimelinePostsDTO
 
 router = APIRouter()
 
-@router.get("/", response_model=List[TimelinePostsSchema])
+@router.get("/", response_model=List[TimelinePostsDTO])
 async def timeline_post(
     limit: int = 10,
     offset: int = 0,
@@ -20,7 +20,7 @@ async def timeline_post(
 
 @router.put("/")
 async def create_dummy_model(
-    new_timeline_object: TimelinePostsSchema,
+    new_timeline_object: TimelinePostsDTO,
     timeline_dao: TimelinePostsDAO = Depends(),
 ) -> None:
     
