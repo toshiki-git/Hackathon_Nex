@@ -15,10 +15,10 @@ class TimelinePostsDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_timeline_posts(self, user_id: int, content: str, image_url:  Optional[str]) -> None:
-        new_timeline_posts = TimelinePostsModel(user_id=user_id, content=content, image_url=image_url)
+    async def create_timeline_posts(self, user_id: int, content: str, image_url: Optional[str], game_ids: List[int]) -> None:
+        new_timeline_posts = TimelinePostsModel(user_id=user_id, content=content, image_url=image_url, game_tags=game_ids)
+        
         self.session.add(new_timeline_posts)
-        await self.session.commit()
 
     async def get_timeline_posts(self, limit: int, offset: int) -> List[TimelinePostsModel]:
         raw_timeline = await self.session.execute(
@@ -26,3 +26,4 @@ class TimelinePostsDAO:
         )
 
         return list(raw_timeline.scalars().fetchall())
+    

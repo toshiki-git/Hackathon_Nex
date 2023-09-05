@@ -27,5 +27,7 @@ async def create_timeline_post(
     await timeline_dao.create_timeline_posts(
         user_id = new_timeline_object.user_id,
         content = new_timeline_object.content,
-        image_url = new_timeline_object.image_url
+        image_url = new_timeline_object.image_url,
+        game_ids = new_timeline_object.game_ids
     )
+    
