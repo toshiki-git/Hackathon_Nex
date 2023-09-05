@@ -37,3 +37,11 @@ indent_size = 2
 [*.ts]
 indent_style = space
 indent_size = 2
+
+[*.jsx]
+indent_style = space
+indent_size = 2
+
+[*.tsx]
+indent_style = space
+indent_size = 2
