@@ -16,8 +16,10 @@ const sessionOptions: IronSessionOptions = {
 
 declare module "iron-session" {
   interface IronSessionData {
-    token: string;
-    refresh_token: string;
+    auth: {
+      token: string;
+      refresh_token: string;
+    };
   }
 }
 

@@ -12,14 +12,25 @@ export interface Token {
   refresh_token: string;
 }
 
-instance.interceptors.request.use(
-  (config) => {
-    config.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
-    return config;
+export const axiosClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
+  headers: {
+    "Content-Type": "application/json",
   },
-  (error) =>
-    // エラー時の処理
-    Promise.reject(error),
-);
+});
 
-export default instance;
+export const axiosServer = axios.create({
+  baseURL: process.env.API_ENDPOINT,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const axiosSelf = axios.create({
+  baseURL: process.env.HOST,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export default axiosSelf;

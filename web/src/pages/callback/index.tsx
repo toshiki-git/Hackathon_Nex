@@ -1,4 +1,4 @@
-import axios from "lib/axios";
+import { axiosServer } from "lib/axios";
 import Axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "lib/session";
@@ -13,7 +13,7 @@ export const getServerSideProps = withIronSessionSsr(
     GetServerSidePropsResult<{ [key: string]: unknown }>
   > => {
     try {
-      const request = await axios.post("/api/token", {
+      const request = await axiosServer.post("/api/token", {
         key_token: query.key_token as string,
       });
 
@@ -39,6 +39,9 @@ export const getServerSideProps = withIronSessionSsr(
           },
         };
       }
+
+      // eslint-disable-next-line no-console
+      console.log(err);
 
       return {
         props: {
