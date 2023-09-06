@@ -24,6 +24,7 @@ import React from "react";
 import useSwitchTheme from "@/utils/theme";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
+import LogoutModal from "./LogoutModal";
 
 const headerItemList = [
   {
@@ -66,6 +67,13 @@ const Header = () => {
     onOpen: openAccountModal,
     onClose: closeAccountModal,
   } = useDisclosure();
+
+  const {
+    isOpen: isLogoutModalOpen,
+    onOpen: openLogoutModal,
+    onClose: closeLogoutModal,
+  } = useDisclosure();
+  
   return (
     <header className="header bg-overlay border-slate-600">
       <div className="header__items">
@@ -115,6 +123,7 @@ const Header = () => {
           </DropdownItem>
           <DropdownItem
             key="delete"
+            onPress={openLogoutModal}
             className="text-danger"
             color="danger"
             startContent={<TbLogout2 />}
@@ -125,6 +134,7 @@ const Header = () => {
       </Dropdown>
 
       <AccoutModal isOpen={isAccountModalOpen} onClose={closeAccountModal} />
+      <LogoutModal isOpen={isLogoutModalOpen} onClose={closeLogoutModal} />
     </header>
   );
 };

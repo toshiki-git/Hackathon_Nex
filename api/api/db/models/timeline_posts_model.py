@@ -3,8 +3,9 @@ from sqlalchemy.orm import mapped_column, Mapped
 from api.db.base import Base
 from api.db.models.user_model import UserModel
 from sqlalchemy.dialects import postgresql as pg
-    
+
 class TimelinePostsModel(Base):
+    """Model for the timeline_posts table."""
     __tablename__ = "timeline_post"
 
     post_id  : Mapped[int]  = mapped_column(primary_key=True, autoincrement=True)

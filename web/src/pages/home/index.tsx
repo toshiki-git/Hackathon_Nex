@@ -1,2 +1,14 @@
-const Home = () => <h1>Home</h1>;
+import PostArea from "@/components/PostArea";
+import PostList from "@/components/PostList";
+import React from "react";
+
+const Home = () => {
+  return (
+    <div>
+      <PostArea />
+      <PostList />
+    </div>
+  );
+};
+
 export default Home;

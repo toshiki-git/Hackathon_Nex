@@ -17,7 +17,7 @@ class UserDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def get_user(self, id: int) -> Optional[UserModel]:
+    async def get_user(self, user_id: int) -> Optional[UserModel]:
         """Function can get the user from user_id.
 
         If not found, return None
@@ -25,7 +25,7 @@ class UserDAO:
         :param user_id: id of the user you want to get.
         :returns: if not found user, will return None.
         """
-        query = select(UserModel).where(UserModel.id == id)
+        query = select(UserModel).where(UserModel.id == user_id)
         rows = await self.session.execute(query)
 
         return rows.scalar_one_or_none()
