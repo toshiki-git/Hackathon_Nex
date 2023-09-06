@@ -14,7 +14,9 @@ class TimelinePostsDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_timeline_posts(self, user_id: int, content: str, image_url: Optional[str], hashtags: List[str]) -> None:
+    async def create_timeline_posts(
+        self, user_id: int, content: str, image_url: Optional[str], hashtags: List[str]
+    ) -> None:
         """Function to create timeline post.
 
         :param user_id: id of owner of post
@@ -22,12 +24,16 @@ class TimelinePostsDAO:
         :param image_url: URL of image
         :param hashtags: List of hashtags
         """
-        new_timeline_posts = TimelinePostsModel(user_id=user_id, content=content, image_url=image_url, hashtags=hashtags)
+        new_timeline_posts = TimelinePostsModel(
+            user_id=user_id, content=content, image_url=image_url, hashtags=hashtags
+        )
 
         self.session.add(new_timeline_posts)
 
     async def get_timeline_posts(
-        self, limit: int, offset: int,
+        self,
+        limit: int,
+        offset: int,
     ) -> List[TimelinePostsModel]:
         """Function to retrieve timeline posts.
 
@@ -41,8 +47,9 @@ class TimelinePostsDAO:
 
         return list(raw_timeline.scalars().fetchall())
 
-
-    async def get_timeline_search_hashtag(self, hashtag: str) -> List[TimelinePostsModel]:
+    async def get_timeline_search_hashtag(
+        self, hashtag: str
+    ) -> List[TimelinePostsModel]:
         query = select(TimelinePostsModel)
         result = await self.session.execute(query)
         all_posts = result.scalars().fetchall()
