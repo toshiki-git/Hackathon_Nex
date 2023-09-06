@@ -6,11 +6,11 @@ class TimelinePostsDTO(BaseModel):
     user_id: int
     content : str
     image_url : Optional[str]
-    game_ids: List[int]
+    hashtags: List[str]
     model_config = ConfigDict(from_attributes=True)
     
 class TimelineInputDTO(BaseModel):
     user_id: int
     content : str
     image_url : Optional[str]
-    game_titles: List[str]
+    hashtags: List[str]

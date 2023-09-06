@@ -3,49 +3,49 @@ from typing import List
 from fastapi import APIRouter,HTTPException
 from fastapi.param_functions import Depends
 
-from api.db.dao.game_tag import GameTagDAO
-from api.db.models.game_tag_model import GameTagModel
+from api.db.dao.hashtag import HashTagDAO
+from api.db.models.hashtag_model import HashTagModel
 from api.web.api.tag.schema import GameTagDTO
 
 router = APIRouter()
 
-@router.post("/create_tag")
-async def create_game_tag(
-    title: str,
-    game_tag_dao: GameTagDAO = Depends(),
+@router.post("/add_hashtag")
+async def create_hashtag(
+    hashtag: str,
+    hashtag_dao: HashTagDAO = Depends(),
 ) -> None:
 
-    return await game_tag_dao.create_game_tag(title=title)
+    return await hashtag_dao.create_hashtag(hashtag=hashtag)
     
 
-@router.get("/get_tags", response_model=List[GameTagDTO])
-async def get_game_tags(
+@router.get("/gain_hashtags", response_model=List[GameTagDTO])
+async def get_hashtags(
     limit: int = 10,
     offset: int = 0,
-    game_tag_dao: GameTagDAO = Depends(),
-) -> List[GameTagModel]:
+    hashtag_dao: HashTagDAO = Depends(),
+) -> List[HashTagModel]:
 
-    game_tags = await game_tag_dao.get_game_tags(limit=limit, offset=offset)
-    return game_tags
+    hashtag = await hashtag_dao.get_hashtags(limit=limit, offset=offset)
+    return hashtag
 
-@router.get("/id_get", response_model=GameTagDTO)
-async def get_tag_by_id(
+@router.get("/gain_hashtag_byid", response_model=GameTagDTO)
+async def get_hashtag_by_id(
     tag_id: int,
-    game_tag_dao: GameTagDAO = Depends(),
-) -> GameTagModel:
+    hashtag_dao: HashTagDAO = Depends(),
+) -> HashTagModel:
 
-    game_tag = await game_tag_dao.get_game_tag_by_id(tag_id=tag_id)
-    if game_tag is None:
+    hashtag = await hashtag_dao.get_hashtag_by_id(tag_id=tag_id)
+    if hashtag is None:
         raise HTTPException(status_code=401, detail="Game tag not found")
-    return game_tag
+    return hashtag
 
 
 
-@router.get("/title_get", response_model=List[GameTagDTO])
+@router.get("/gain_hashtag_bytitle", response_model=List[GameTagDTO])
 async def get_tag_partial_by_title(
-    title: str,
-    game_tag_dao: GameTagDAO = Depends(),
-) -> List[GameTagModel]:
+    hashtag: str,
+    hashtag_dao: HashTagDAO = Depends(),
+) -> List[HashTagModel]:
 
-    game_tags = await game_tag_dao.get_tags_partial_by_title(title=title)
-    return game_tags
+    hashtags = await hashtag_dao.get_hashtags_partial_by_title(hashtag=hashtag)
+    return hashtags

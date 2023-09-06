@@ -15,8 +15,8 @@ class TimelinePostsDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_timeline_posts(self, user_id: int, content: str, image_url: Optional[str], game_ids: List[int]) -> None:
-        new_timeline_posts = TimelinePostsModel(user_id=user_id, content=content, image_url=image_url, game_ids=game_ids)
+    async def create_timeline_posts(self, user_id: int, content: str, image_url: Optional[str], hashtags: List[str]) -> None:
+        new_timeline_posts = TimelinePostsModel(user_id=user_id, content=content, image_url=image_url, hashtags=hashtags)
         
         self.session.add(new_timeline_posts)
 
@@ -29,6 +29,6 @@ class TimelinePostsDAO:
     
     async def get_timeline_tag(self, game_id: int) -> List[TimelinePostsModel]:
         result = await self.session.execute(
-            select(TimelinePostsModel).filter(TimelinePostsModel.game_ids.contains([game_id]))
+            select(TimelinePostsModel).filter(TimelinePostsModel.hashtags.contains([game_id]))
         )
         return list(result.scalars().fetchall())
