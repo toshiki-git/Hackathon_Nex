@@ -1,8 +1,8 @@
-"""delete game tag table
+"""delete game tag
 
-Revision ID: 69a28c18f943
+Revision ID: dc9cf4c14432
 Revises: 4124e28836d1
-Create Date: 2023-09-06 15:29:16.880688
+Create Date: 2023-09-06 16:03:13.010163
 
 """
 import sqlalchemy as sa
@@ -11,7 +11,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "69a28c18f943"
+revision = "dc9cf4c14432"
 down_revision = "4124e28836d1"
 branch_labels = None
 depends_on = None
