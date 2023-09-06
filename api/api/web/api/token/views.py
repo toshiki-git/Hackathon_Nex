@@ -101,7 +101,6 @@ async def generate_token(
     )
 
 
-# TODO: Tokenのリフレッシュ機能をここの関数にて定義
 @router.post("/token/refresh")
 async def generate_jwt_token(
     request: Request,

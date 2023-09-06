@@ -2,6 +2,8 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserModelDTO(BaseModel):
+    """DTO for User model."""
+
     id: int
     username: str
     email: str

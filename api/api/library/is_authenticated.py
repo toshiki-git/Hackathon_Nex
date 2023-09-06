@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import Depends, Header, HTTPException, Response
+from fastapi import Depends, Header, HTTPException
 from jose import ExpiredSignatureError, JWTError, jwt
 
 from api.db.dao.user_dao import UserDAO
@@ -9,10 +9,26 @@ from api.web.api.users.schema import UserModelDTO
 
 
 async def is_authenticated(
-    response: Response,
     authorization: Optional[str] = Header(default=None),
     user_dao: UserDAO = Depends(),
 ) -> UserModelDTO:
+    """Autheticates a user based on the provided authorization token.
+
+    This function validates the provided authorization token by decofing it
+    and verifying its autheticity. If the token is valid, it retrieves the
+    associated user information from the database and returns it as a
+    UserModelDTO object.
+
+    :param authorization:
+        The authorization token provided in the HTTP headers.
+        It should be in the format "Bearer <token>".
+    :param user_dao: UserDAO object
+    :returns: UserModelDTO object
+    :raises HTTPException:
+        - 400 (Bad Request): If the authorization header is missing.
+        - 401 (Unauthorized): If the token is expired or invalid.
+        - 404 (Not Found): If the user associated with the token is not found.
+    """
     if authorization is None:
         raise HTTPException(
             status_code=400,

@@ -85,6 +85,8 @@ ignore =
   ; comparison to False should be 'if cond is False:' or 'if not cond:
   ; When use sqlalchemy it's will be annoying
   E712,
+  ; Found too many raises in a function: 4 > 3
+  WPS238,
 
 per-file-ignores =
   ; all tests
