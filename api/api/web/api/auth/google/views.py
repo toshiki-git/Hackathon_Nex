@@ -31,7 +31,7 @@ async def google_login(request: Request) -> Response:
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="client_id or client_secret not found to create URL for Google login."
+            detail="client_id or client_secret not found to create URL for Google login.",
         )
 
     logger.info("Success to generate login url and redirect.")
@@ -67,8 +67,7 @@ async def google_callback(
     if code is None:
         logger.error("Google login failed")
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Google login faild."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Google login faild."
         )
 
     try:
@@ -83,7 +82,7 @@ async def google_callback(
         logger.error("Failed to retrieve access token for Google login.")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to retrieve the access token for Google login."
+            detail="Failed to retrieve the access token for Google login.",
         )
 
     user_info = await google.get_user_info(access_token)

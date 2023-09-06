@@ -41,7 +41,7 @@ async def generate_token(
         logger.error("Not found key_token to generate token")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Not found key_token to generate token."
+            detail="Not found key_token to generate token.",
         )
 
     for token in token_list:
@@ -54,29 +54,49 @@ async def generate_token(
                 logger.critical("Not found user when expire key_token.")
                 raise NoResultFound()
 
-            return JSONResponse(
-                {
-                    "token": create_token(
-                        data={
-                            "token_type": "normal",
-                            "user_id": user.id,
-                            "email": user.email,
-                            "username": user.username,
-                        },
-                    ),
-                    "refresh_token": create_token(
-                        data={
-                            "token_type": "refresh_token",
-                            "user_id": user.id,
-                        },
-                        expires_delta=timedelta(days=90),
-                    ),
+            token = create_token(
+                data={
+                    "token_type": "token",
+                    "user_id": user.id,
+                    "email": user.email,
+                    "username": user.username,
                 },
+                expires_delta=static.TOKEN_EXPIRE_TIME,
+            )
+            refresh_token = create_token(
+                data={
+                    "token_type": "refresh_token",
+                    "user_id": user.id,
+                },
+                expires_delta=static.REFRESH_TOKEN_EXPIRE_TIME,
             )
 
+            response = JSONResponse(
+                {
+                    "token": token,
+                    "refresh_token": refresh_token,
+                },
+            )
+            response.set_cookie(
+                key="token",
+                value=token,
+                expires=int(static.TOKEN_EXPIRE_TIME.total_seconds()),
+                secure=settings.is_production,
+                domain=settings.domain,
+                samesite='strict'
+            )
+            response.set_cookie(
+                key="refresh_token",
+                value=refresh_token,
+                expires=int(static.REFRESH_TOKEN_EXPIRE_TIME.total_seconds()),
+                secure=settings.is_production,
+                domain=settings.domain,
+                samesite='strict'
+            )
+            return response
+
     raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Your key_token is expired."
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Your key_token is expired."
     )
 
 
@@ -103,18 +123,16 @@ async def generate_jwt_token(
     except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Your refresh token has expired."
+            detail="Your refresh token has expired.",
         )
     except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh_token."
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh_token."
         )
 
-    if payload["token_type"] == "normal":
+    if payload["token_type"] == "token":
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh_token."
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh_token."
         )
 
     user = await user_dao.get_user(payload["user_id"])
@@ -123,7 +141,7 @@ async def generate_jwt_token(
             {
                 "token": create_token(
                     data={
-                        "token_type": "normal",
+                        "token_type": "token",
                         "user_id": user.id,
                         "email": user.email,
                         "username": user.username,
@@ -134,7 +152,7 @@ async def generate_jwt_token(
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Your refresh token is invalid."
+        detail="Your refresh token is invalid.",
     )
 
 

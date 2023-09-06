@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     These parameters can be configured
     with environment variables.
     """
-
+    domain: str = "localhost"
     host: str = "127.0.0.1"
     port: int = 8000
 
@@ -65,6 +65,10 @@ class Settings(BaseSettings):
     # token credentials
     token_algorithm: str = ""
     token_secret_key: str = "night_g_some_secret_key"
+
+    @property
+    def is_production(self):
+        return self.environment == "production"
 
     @property
     def db_url(self) -> URL:
