@@ -11,4 +11,4 @@ class TimelinePostsModel(Base):
     user_id : Mapped[int]  = mapped_column(Integer, ForeignKey(UserModel.id, onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     content : Mapped[str]  = mapped_column(String(length=500), nullable=False)
     image_url : Mapped[str]  = mapped_column(String(length=200), nullable=True)
-    game_tags : Mapped[int] = mapped_column(pg.ARRAY(Integer), nullable=True)
+    game_ids : Mapped[int] = mapped_column(pg.ARRAY(Integer), nullable=True)

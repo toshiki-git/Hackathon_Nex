@@ -28,7 +28,7 @@ async def create_timeline_post(
         user_id = new_timeline_object.user_id,
         content = new_timeline_object.content,
         image_url = new_timeline_object.image_url,
-        game_ids = new_timeline_object.game_tags
+        game_ids = new_timeline_object.game_ids
     )
     
 @router.get("/search", response_model=List[TimelinePostsDTO])
