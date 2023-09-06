@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from api.db.meta import meta
@@ -14,12 +14,12 @@ class Base(DeclarativeBase):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(static.TIME_ZONE),
+        default=func.now(),
         nullable=False,
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(static.TIME_ZONE),
-        onupdate=datetime.now(static.TIME_ZONE),
+        default=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )
