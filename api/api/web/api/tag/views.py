@@ -42,10 +42,10 @@ async def get_tag_by_id(
 
 
 @router.get("/title_get", response_model=List[GameTagDTO])
-async def get_tag_by_title(
-    title: List[str],
+async def get_tag_partial_by_title(
+    title: str,
     game_tag_dao: GameTagDAO = Depends(),
 ) -> List[GameTagModel]:
 
-    game_tags = await game_tag_dao.get_game_tags_by_titles(titles=title)
+    game_tags = await game_tag_dao.get_tags_partial_by_title(title=title)
     return game_tags

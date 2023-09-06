@@ -28,10 +28,12 @@ class GameTagDAO:
         result = await self.session.execute(query)
         return result.scalars().first()
     
-    async def get_game_tags_by_titles(self, titles: List[str]) -> List[GameTagModel]:
-        query = select(GameTagModel).filter(GameTagModel.title.ilike('%' + titles[0] + '%'))
-        for title in titles[1:]:
-            query = query.or_(GameTagModel.title.ilike('%' + title + '%'))
-    
+    async def get_tags_partial_by_title(self, title: str) -> List[GameTagModel]:
+        query = select(GameTagModel).filter(GameTagModel.title.ilike(f'%{title}%'))
         result = await self.session.execute(query)
-        return list(result.scalars().fetchall())
+        return list(result.scalars().all())
+
+    async def get_tags_exact_by_titles(self, titles: List[str]) -> List[GameTagModel]:
+        query = select(GameTagModel).filter(GameTagModel.title.in_(titles))
+        result = await self.session.execute(query)
+        return list(result.scalars().all())

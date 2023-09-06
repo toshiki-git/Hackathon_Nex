@@ -26,11 +26,11 @@ async def create_timeline_post(
     timeline_dao: TimelinePostsDAO = Depends(),
 ) -> None:
     
-    game_ids = await game_tag_dao.get_game_tags_by_titles(titles=new_timeline_object.game_titles)
-    game_ids = [tag.id for tag in game_ids]
+    game_tags = await game_tag_dao.get_tags_exact_by_titles(titles=new_timeline_object.game_titles)
+    game_ids = [tag.id for tag in game_tags]
     
-    if not game_ids:
-        game_ids=[10]
+    #if not game_ids:
+        #game_ids=[10]
     
     await timeline_dao.create_timeline_posts(
         user_id = new_timeline_object.user_id,
