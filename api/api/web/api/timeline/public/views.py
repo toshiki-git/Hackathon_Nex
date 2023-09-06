@@ -9,16 +9,16 @@ from api.web.api.timeline.public.schema import TimelinePostsDTO
 
 router = APIRouter()
 
-@router.get("/", response_model=List[TimelinePostsDTO])
+@router.get("/get", response_model=List[TimelinePostsDTO])
 async def get_timeline_posts(
     limit: int = 10,
     offset: int = 0,
     timeline_dao: TimelinePostsDAO = Depends(),
     ) -> List[TimelinePostsModel] :
-    
+ 
     return await timeline_dao.get_timeline_posts(limit=limit, offset=offset)
 
-@router.post("/")
+@router.post("/psot")
 async def create_timeline_post(
     new_timeline_object: TimelinePostsDTO,
     timeline_dao: TimelinePostsDAO = Depends(),
@@ -28,6 +28,13 @@ async def create_timeline_post(
         user_id = new_timeline_object.user_id,
         content = new_timeline_object.content,
         image_url = new_timeline_object.image_url,
-        game_ids = new_timeline_object.game_ids
+        game_ids = new_timeline_object.game_tags
     )
     
+@router.get("/search", response_model=List[TimelinePostsDTO])
+async def get_timeline_tag(
+    game_id : int,
+    timeline_dao: TimelinePostsDAO = Depends()
+) -> List[TimelinePostsModel] :
+
+    return await timeline_dao.get_timeline_tag(game_id=game_id)

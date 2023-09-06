@@ -27,3 +27,8 @@ class TimelinePostsDAO:
 
         return list(raw_timeline.scalars().fetchall())
     
+    async def get_timeline_tag(self, game_id: int) -> List[TimelinePostsModel]:
+        result = await self.session.execute(
+            select(TimelinePostsModel).filter(TimelinePostsModel.game_tags.contains([game_id]))
+        )
+        return list(result.scalars().fetchall())
