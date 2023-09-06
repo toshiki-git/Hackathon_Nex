@@ -5,7 +5,8 @@ from fastapi.param_functions import Depends
 
 from api.db.models.timeline_posts_model import TimelinePostsModel
 from api.db.dao.timeline_posts import TimelinePostsDAO
-from api.web.api.timeline.public.schema import TimelinePostsDTO
+from api.web.api.timeline.public.schema import TimelinePostsDTO, TimelineInputDTO
+from api.db.dao.game_tag import GameTagDAO
 
 router = APIRouter()
 
@@ -20,15 +21,22 @@ async def get_timeline_posts(
 
 @router.post("/psot")
 async def create_timeline_post(
-    new_timeline_object: TimelinePostsDTO,
+    new_timeline_object: TimelineInputDTO,
+    game_tag_dao : GameTagDAO = Depends (),
     timeline_dao: TimelinePostsDAO = Depends(),
 ) -> None:
+    
+    game_ids = await game_tag_dao.get_game_tags_by_titles(titles=new_timeline_object.game_titles)
+    game_ids = [tag.id for tag in game_ids]
+    
+    if not game_ids:
+        game_ids=[10]
     
     await timeline_dao.create_timeline_posts(
         user_id = new_timeline_object.user_id,
         content = new_timeline_object.content,
         image_url = new_timeline_object.image_url,
-        game_ids = new_timeline_object.game_ids
+        game_ids = game_ids
     )
     
 @router.get("/search", response_model=List[TimelinePostsDTO])
