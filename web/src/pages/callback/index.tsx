@@ -2,6 +2,7 @@ import axios from "lib/axios";
 import Axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "lib/session";
+import getLayout from "@/components/layouts";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = withIronSessionSsr(
@@ -65,5 +66,7 @@ const Callback = ({
     <p>{error.data.detail}</p>
   </div>
 );
+
+Callback.getLayout = getLayout;
 
 export default Callback;
