@@ -27,8 +27,16 @@ class TimelinePostsDAO:
 
         return list(raw_timeline.scalars().fetchall())
     
-    async def get_timeline_tag(self, game_id: int) -> List[TimelinePostsModel]:
-        result = await self.session.execute(
-            select(TimelinePostsModel).filter(TimelinePostsModel.hashtags.contains([game_id]))
-        )
-        return list(result.scalars().fetchall())
+    
+    async def get_timeline_search_hashtag(self, hashtag: str) -> List[TimelinePostsModel]:
+        query = select(TimelinePostsModel)
+        result = await self.session.execute(query)
+        all_posts = result.scalars().fetchall()
+
+        matching_posts = []
+
+        for post in all_posts:
+            if any(hashtag.lower() in tag.lower() for tag in post.hashtags):
+                matching_posts.append(post)
+
+        return matching_posts
