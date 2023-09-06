@@ -1,12 +1,13 @@
 import React from "react";
-import SignUp from 'src/components/layouts/SignUp/SignUp';
+import SignUp from "@/components/layouts/main/SignUp/SignUp";
+import getLayout from "@/components/layouts/main";
 
-const WelcomePage = () => {
-  return (
-    <div>
-      <SignUp />
-    </div>
-  );
-}
+const Welcome = () => (
+  <div>
+    <SignUp />
+  </div>
+);
 
-export default WelcomePage;
+Welcome.getLayout = getLayout;
+
+export default Welcome;

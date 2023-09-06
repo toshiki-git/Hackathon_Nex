@@ -22,6 +22,7 @@ import { useTheme } from "next-themes";
 import React from "react";
 
 import useSwitchTheme from "@/utils/theme";
+import headerCSS from "./Header.module.scss";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
 import LogoutModal from "./LogoutModal";
@@ -73,16 +74,18 @@ const Header = () => {
     onOpen: openLogoutModal,
     onClose: closeLogoutModal,
   } = useDisclosure();
-  
+
   return (
-    <header className="header bg-overlay border-slate-600">
-      <div className="header__items">
+    <header className={`${headerCSS.header} bg-overlay border-slate-600`}>
+      <div className={headerCSS.header__items}>
         <HeaderItem />
       </div>
       <Dropdown>
         <DropdownTrigger>
-          <div className="header__icon">
-            <div className="header__icon__pc rounded-lg my-2 py-2 px-3 hover:bg-white/[.06]">
+          <div className={headerCSS.header__icon}>
+            <div
+              className={`${headerCSS.header__icon__pc} rounded-lg my-2 py-2 px-3 hover:bg-white/[.06]`}
+            >
               <User
                 name="Junior Garcia"
                 classNames={{
@@ -97,7 +100,7 @@ const Header = () => {
               <GrMoreVertical size={20} />
             </div>
             <Avatar
-              className="my-2 w-8 h-8 header__icon__sm"
+              className={`my-2 w-8 h-8 ${headerCSS.header__icon__sm}`}
               src="https://avatars.githubusercontent.com/u/30373425?v=4"
               size="md"
             />
