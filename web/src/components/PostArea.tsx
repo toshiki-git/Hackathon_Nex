@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
-import { CameraIcon } from "./CameraIcon";
+import { BsFillImageFill } from "react-icons/bs";
 
 const PostArea: React.FC = () => {
   const [content, setContent] = useState<string>("");
@@ -49,7 +49,7 @@ const PostArea: React.FC = () => {
             variant="faded"
             aria-label="画像をアップロード"
           >
-            <CameraIcon />
+            <BsFillImageFill size={20} />
           </Button>
           {selectedImage && imagePreviewUrl && (
             <div className="flex">
