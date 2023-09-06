@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class KeyTokenPostDTO(BaseModel):
     """DTO for when generating JWT token."""
 
-    key_token: Optional[str]
+    key_token: str
 
 
 class JWTTokenPostDTO(BaseModel):
