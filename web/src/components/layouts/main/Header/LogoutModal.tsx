@@ -30,10 +30,10 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ isOpen, onClose }) => (
         </p>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose}>
+        <Button variant="light" onPress={onClose}>
           キャンセル
         </Button>
-        <Button color="success" variant="light" onPress={onClose}>
+        <Button color="danger" variant="light" onPress={onClose}>
           ログアウト
         </Button>
       </ModalFooter>

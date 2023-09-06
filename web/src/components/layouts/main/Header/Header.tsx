@@ -100,7 +100,7 @@ const Header = () => {
               <GrMoreVertical size={20} />
             </div>
             <Avatar
-              className="my-2 w-8 h-8 header__icon__sm"
+              className={`my-2 w-8 h-8 ${headerCSS.header__icon__sm}`}
               src="https://avatars.githubusercontent.com/u/30373425?v=4"
               size="md"
             />

@@ -63,10 +63,10 @@ const AccoutModal: React.FC<AccoutModalProps> = ({ isOpen, onClose }) => (
         </ModalBody>
         <ModalFooter>
           <Button color="danger" variant="light" onPress={onClose}>
-            Close
+            閉じる
           </Button>
           <Button color="primary" onPress={onClose}>
-            Action
+            保存
           </Button>
         </ModalFooter>
       </>
