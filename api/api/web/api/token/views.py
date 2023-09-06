@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status, HTTPException
 from fastapi.responses import JSONResponse
 from jose import ExpiredSignatureError, JWTError, jwt
 from loguru import logger
@@ -11,7 +11,6 @@ from api.db.dao.user_dao import UserDAO
 from api.library.jwt_token import create_token
 from api.settings import settings
 from api.static import static
-from api.utils.response import json_err_content
 from api.web.api.token.schema import JWTTokenPostDTO, KeyTokenPostDTO
 
 router = APIRouter()
@@ -20,7 +19,6 @@ logger = logger.bind(task="Token")
 
 @router.post("/token")
 async def generate_token(
-    request: Request,
     token_dto: KeyTokenPostDTO,
     token_dao: TokenDAO = Depends(),
     user_dao: UserDAO = Depends(),
@@ -37,28 +35,13 @@ async def generate_token(
         Invalid key_token: When not found key_token.
         Unauthorized HTTP: When the key_token is expired.
     """
-    if token_dto.key_token is None:
-        logger.error("Not found key_token to generate token")
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=json_err_content(
-                500,
-                "Invalid key_token",
-                "Not found key_token to generate token.",
-            ),
-        )
-
     token_list = await token_dao.get_token(key_token=token_dto.key_token)
 
     if not token_list:
         logger.error("Not found key_token to generate token")
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=json_err_content(
-                500,
-                "Invalid key_token",
-                "Not found key_token to generate token.",
-            ),
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not found key_token to generate token."
         )
 
     for token in token_list:
@@ -91,19 +74,14 @@ async def generate_token(
                 },
             )
 
-    return JSONResponse(
+    raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        content=json_err_content(
-            401,
-            "Unauthorized HTTP",
-            "Your key_token is expired.",
-        ),
+        detail="Your key_token is expired."
     )
 
 
 @router.post("/token/refresh")
 async def generate_jwt_token(
-    request: Request,
     token_dto: JWTTokenPostDTO,
     user_dao: UserDAO = Depends(),
 ) -> Response:
@@ -122,57 +100,42 @@ async def generate_jwt_token(
             settings.token_secret_key,
             algorithms=[settings.token_algorithm],
         )
-
-        if payload["token_type"] == "normal":
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content=json_err_content(
-                    401,
-                    "Invalid token",
-                    "This is a normal token",
-                ),
-            )
-
-        user = await user_dao.get_user(payload["user_id"])
-        if user is not None:
-            return JSONResponse(
-                {
-                    "token": create_token(
-                        data={
-                            "token_type": "normal",
-                            "user_id": user.id,
-                            "email": user.email,
-                            "username": user.username,
-                        },
-                    ),
-                },
-            )
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content=json_err_content(
-                401,
-                "Invalid user_id",
-                "Your refresh token is invalid",
-            ),
-        )
     except ExpiredSignatureError:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content=json_err_content(
-                401,
-                "Token has expired",
-                "Your refresh token has expired",
-            ),
+            detail="Your refresh token has expired."
         )
     except JWTError:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content=json_err_content(
-                401,
-                "Invalid token",
-                "Your refresh token is invalid",
-            ),
+            detail="Invalid refresh_token."
         )
+
+    if payload["token_type"] == "normal":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh_token."
+        )
+
+    user = await user_dao.get_user(payload["user_id"])
+    if user is not None:
+        return JSONResponse(
+            {
+                "token": create_token(
+                    data={
+                        "token_type": "normal",
+                        "user_id": user.id,
+                        "email": user.email,
+                        "username": user.username,
+                    },
+                ),
+            },
+        )
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Your refresh token is invalid."
+    )
 
 
 # NOTE: この関数はテスト用関数で、削除予定
