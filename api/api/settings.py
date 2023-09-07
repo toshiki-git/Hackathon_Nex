@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     These parameters can be configured
     with environment variables.
     """
+
     domain: str = "localhost"
     host: str = "127.0.0.1"
     port: int = 8000
