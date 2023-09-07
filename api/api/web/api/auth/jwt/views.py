@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from api.library.is_authenticated import is_authenticated
+from api.library.auth import is_authenticated
 from api.web.api.users.schema import UserModelDTO
 
 router = APIRouter()

@@ -4,15 +4,16 @@ from fastapi import Cookie, Depends, Header, HTTPException
 from jose import ExpiredSignatureError, JWTError, jwt
 
 from api.db.dao.user_dao import UserDAO
+from api.library.auth.schema import AuthenticatedUser
 from api.settings import settings
-from api.web.api.users.schema import UserModelDTO
 
 
 async def is_authenticated(
     user_dao: UserDAO = Depends(),
     access_token: str = Cookie(default=None),
+    session_id: str = Cookie(default=None),
     authorization: Optional[str] = Header(default=None),
-) -> UserModelDTO:
+) -> AuthenticatedUser:
     """Autheticates a user based on the provided authorization token.
 
     This function validates the provided authorization token by decofing it
@@ -64,7 +65,10 @@ async def is_authenticated(
     user = await user_dao.get_user(payload["user_id"])
 
     if user is not None:
-        return UserModelDTO.model_validate(user)
+        authenticated_user = AuthenticatedUser.model_validate(user)
+        if session_id is not None:
+            authenticated_user.session_cert = session_id
+        return authenticated_user
 
     raise HTTPException(
         status_code=404,

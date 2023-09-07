@@ -1,15 +1,11 @@
-from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
-from jose import ExpiredSignatureError, JWTError, jwt
 from loguru import logger
-from sqlalchemy.exc import NoResultFound
 
 from api.db.dao.magic_link_dao import MagicLinkDAO
 from api.db.dao.session_dao import SessionDAO
 from api.db.dao.user_dao import UserDAO
-from api.library.jwt_token import create_token
 from api.settings import settings
 from api.static import static
 from api.web.api.token.schema import JWTTokenPostDTO, MagicLinkPostDTO
@@ -52,7 +48,7 @@ async def generate_token(
         response.set_cookie(
             key="access_token",
             value=session_info["access_token"],
-            expires=int(static.ACCESS_TOKEN_EXPIRE_TIME.total_seconds()),
+            max_age=int(static.ACCESS_TOKEN_EXPIRE_TIME.total_seconds()),
             secure=settings.is_production,
             domain=settings.domain,
             samesite="strict",
@@ -61,7 +57,7 @@ async def generate_token(
         response.set_cookie(
             key="session_id",
             value=session_info["session_id"],
-            expires=int(static.REFRESH_TOKEN_EXPIRE_TIME.total_seconds()),
+            max_age=int(static.REFRESH_TOKEN_EXPIRE_TIME.total_seconds()),
             secure=settings.is_production,
             domain=settings.domain,
             samesite="strict",
@@ -70,16 +66,16 @@ async def generate_token(
 
         return response
     raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Your seal is expired."
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Your seal is expired."
     )
+
 
 @router.post("/token/refresh")
 async def generate_jwt_token(
     token_dto: JWTTokenPostDTO,
     user_dao: UserDAO = Depends(),
     session_dao: SessionDAO = Depends(),
-    session_id: str = Cookie(default=None)
+    session_id: str = Cookie(default=None),
 ) -> Response:
     """Function to generate a JWT token from refresh token.
 
@@ -93,7 +89,7 @@ async def generate_jwt_token(
     if session_id is None and token_dto.session_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Not found session_id in the request."
+            detail="Not found session_id in the request.",
         )
 
     if token_dto.session_id is not None:
@@ -106,13 +102,11 @@ async def generate_jwt_token(
     if session is not None and session.is_valid():
         user = await user_dao.get_user(user_id=session.user_id)
         new_access_token = session_dao.generate_access_token(user)
-        response = JSONResponse({
-            "access_token": new_access_token
-        })
+        response = JSONResponse({"access_token": new_access_token})
         response.set_cookie(
             key="access_token",
             value=new_access_token,
-            expires=int(static.ACCESS_TOKEN_EXPIRE_TIME.total_seconds()),
+            max_age=int(static.ACCESS_TOKEN_EXPIRE_TIME.total_seconds()),
             secure=settings.is_production,
             domain=settings.domain,
             samesite="strict",
@@ -121,8 +115,7 @@ async def generate_jwt_token(
 
         return response
     raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Expired session_id."
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired session_id."
     )
 
 
