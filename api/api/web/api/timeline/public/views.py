@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 from fastapi.param_functions import Depends
 
 from api.db.dao.timeline_posts import TimelinePostsDAO

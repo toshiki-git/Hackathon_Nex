@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_method

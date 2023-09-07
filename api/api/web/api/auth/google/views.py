@@ -2,7 +2,7 @@ from typing import Optional
 from urllib.parse import urlencode, urljoin
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from loguru import logger
 
 from api.db.dao.magic_link_dao import MagicLinkDAO

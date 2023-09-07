@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_method
@@ -32,5 +32,5 @@ class SessionModel(Base):
         return datetime.now(static.TIME_ZONE) < expire_time
 
     @hybrid_method
-    def discard(self):
+    def discard(self) -> None:
         self.is_discard = True
