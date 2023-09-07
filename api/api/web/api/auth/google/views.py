@@ -1,11 +1,11 @@
 from typing import Optional
 from urllib.parse import urlencode, urljoin
 
-from fastapi import APIRouter, Depends, Request, Response, status, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from loguru import logger
 
-from api.db.dao.token_dao import TokenDAO
+from api.db.dao.magic_link_dao import MagicLinkDAO
 from api.db.dao.user_dao import UserDAO
 from api.services.oauth import NotVerifiedEmailError, google
 from api.settings import settings
@@ -48,7 +48,7 @@ async def google_callback(
     request: Request,
     code: Optional[str] = None,
     user_dao: UserDAO = Depends(),
-    token_dao: TokenDAO = Depends(),
+    magic_link_dao: MagicLinkDAO = Depends(),
 ) -> Response:
     """Process login response from Google.
 
@@ -106,7 +106,7 @@ async def google_callback(
         )
         logger.info("Created new user: xxxx@{0}".format(user_email_domain))
 
-    query = {"key_token": await token_dao.create_token(user_id=user_id)}
+    query = {"seal": await magic_link_dao.create_magic_link(user_id=user_id)}
     return RedirectResponse(
         "{0}?{1}".format(
             urljoin(settings.web_url, "callback"),
