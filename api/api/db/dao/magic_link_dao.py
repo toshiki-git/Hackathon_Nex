@@ -9,14 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.db.dependencies import get_db_session
 from api.db.models.magic_link_model import MagicLinkModel
 
-logger = logger.bind(task="Token")
+logger = logger.bind(task="MagicLink")
 
 
-class KeyTokenAlreadyExpiredError(Exception):
+class SealAlreadyExpiredError(Exception):
     """ "Error when tried to expire key_token was expired."""
 
 
-class KeyTokenNotFoundError(Exception):
+class SealNotFoundError(Exception):
     """Error when not found key_token in database."""
 
 
@@ -26,7 +26,7 @@ class MagicLinkDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    def generate_seal(self, nbytes: Optional[int] = 48) -> str:
+    async def generate_seal(self, nbytes: Optional[int] = 48) -> str:
         """Fucntion to generate a key_token.
 
         :param nbytes:
@@ -36,8 +36,8 @@ class MagicLinkDAO:
         """
         seal = secrets.token_urlsafe(nbytes)
 
-        if self.is_seal_exist(seal=seal):
-            seal = self.generate_seal()
+        if await self.is_seal_exist(seal=seal):
+            return await self.generate_seal()
 
         return seal
 
@@ -47,14 +47,18 @@ class MagicLinkDAO:
         :param user_id: The user_id is foreighn key of User table
         :returns: Returns generated key_token
         """
-        token = self.generate_seal()
+        seal = await self.generate_seal()
         self.session.add(
-            MagicLinkModel(user_id=user_id, token=token),
+            MagicLinkModel(user_id=user_id, seal=seal),
         )
 
-        return token
+        return seal
 
-    async def get_magic_link(self, seal: str) -> List[MagicLinkModel]:
+    async def get_magic_link(self, magic_link_id: int) -> Optional[MagicLinkModel]:
+        session = await self.session.get(MagicLinkModel, magic_link_id)
+        return session
+
+    async def get_magic_link_from_seal(self, seal: str) -> Optional[MagicLinkModel]:
         """Function to get a same key_token for a given key.
 
         Just little little percent can able to generate same key,
@@ -67,11 +71,11 @@ class MagicLinkDAO:
         """
         query = select(MagicLinkModel)
         query = query.filter(
-            and_(MagicLinkModel.token == seal, MagicLinkModel.is_expired == False),
+            and_(MagicLinkModel.seal == seal, MagicLinkModel.is_used == False),
         )
         rows = await self.session.execute(query)
 
-        return list(rows.scalars().fetchall())
+        return rows.scalar_one_or_none()
 
     async def expire_magic_link(self, magik_link_id: int) -> None:
         """Function to expire a token.
@@ -80,21 +84,23 @@ class MagicLinkDAO:
         :raises KeyTokenAlreadyExpiredError: If key_token is already key_token expired
         :raises KeyTokenNotFoundError: If not found key_token
         """
-        token = await self.session.get(MagicLinkModel, magik_link_id)
-        if token is not None:
-            if not token.is_expired:
-                logger.info(f"Expired token: (id: {token.id}) {token.token}")
-                token.is_expired = True
-            elif token.is_expired:
+        magic_link: Optional[MagicLinkModel] = await self.get_magic_link(
+            magik_link_id=magik_link_id
+        )
+        if magic_link is not None:
+            if not magic_link.is_valid():
+                logger.info(f"Expired token: (id: {magic_link.id}) {magic_link.seal}")
+                magic_link.is_used = True
+            elif magic_link.is_used:
                 logger.error("tried to expire token was expired.")
-                raise KeyTokenAlreadyExpiredError()
+                raise SealAlreadyExpiredError()
         else:
-            logger.error(f"Not found key_token: {token}")
-            raise KeyTokenNotFoundError()
+            logger.error(f"Not found key_token: {magic_link}")
+            raise SealNotFoundError()
 
     async def is_seal_exist(self, seal: str) -> bool:
         query = select(MagicLinkModel)
         query = query.filter(MagicLinkModel.seal == seal)
         row = await self.session.execute(query)
 
-        return row.one_or_none() is not None
+        return row.scalar_one_or_none() is not None
