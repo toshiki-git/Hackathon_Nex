@@ -33,8 +33,8 @@ async def is_authenticated(
     """
     if authorization is None and access_token is None:
         raise HTTPException(
-            status_code=400,
-            detail="Authorization header is missing.",
+            status_code=401,
+            detail="Authorization credentials is missing.",
             headers={"WWW-Authenticate": 'Bearer error="invalid_request"'},
         )
 

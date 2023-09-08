@@ -1,6 +1,12 @@
 import getLayout from "@/components/layouts/main";
+import LoginRequired from "@/components/utils/LoginRequired";
 
-const Notification = () => <h1>Notification</h1>;
+const Notification = () => (
+  <>
+    <LoginRequired />
+    <h1>Notification</h1>
+  </>
+);
 
 Notification.getLayout = getLayout;
 

@@ -92,6 +92,7 @@ async def generate_jwt_token(
             detail="Not found session_id in the request.",
         )
 
+    session_cert = ""
     if token_dto.session_id is not None:
         session_cert = token_dto.session_id
     elif session_id is not None:
