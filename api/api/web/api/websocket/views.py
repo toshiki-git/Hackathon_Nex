@@ -9,7 +9,7 @@ router = APIRouter()
 room_websockets: Dict[str, Set[WebSocket]] = {}
 
 @router.websocket("/{community}")
-async def websocket_endpoint(websocket: WebSocket, community: str):
+async def websocket_endpoint(websocket: WebSocket, community: int):
     await websocket.accept()
 
     if community not in room_websockets:

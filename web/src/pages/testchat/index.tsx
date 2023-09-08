@@ -2,14 +2,14 @@ import { useState } from 'react';
 let socket: WebSocket | null = null;
 
 export default function Home() {
-  const [communityName, setcommunityName] = useState('');
+  const [communityID, setCommunityID] = useState('');
   const [userName, setUserName] = useState('');
   const [message, setMessage] = useState('');
   const [chatLog, setChatLog] = useState<string[]>([]);
 
 
   const connectToWebSocket = () => {
-    const wsUrl = `ws://localhost:8000/api/websocket/${communityName}`;
+    const wsUrl = `ws://localhost:8000/api/ws/${communityID}`;
 
     socket = new WebSocket(wsUrl);
     socket.onmessage = (event) => {
@@ -43,10 +43,10 @@ export default function Home() {
     <div>
       <input
         type="text"
-        id="communityName"
+        id="communityID"
         placeholder="ルーム名"
-        value={communityName}
-        onChange={(e) => setcommunityName(e.target.value)}
+        value={communityID}
+        onChange={(e) => setCommunityID(e.target.value)}
       />
       <input
         type="text"
