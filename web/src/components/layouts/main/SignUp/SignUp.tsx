@@ -1,6 +1,5 @@
 import React from "react";
 import { Input, Avatar, Button } from "@nextui-org/react";
-import { FaUser } from "react-icons/fa";
 
 const SignUp = () => (
   <div className="signup">
