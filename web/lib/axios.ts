@@ -1,36 +1,54 @@
-/* eslint no-param-reassign: "error" */
-import axios from "axios";
+import Axios from "axios";
 
-const instance = axios.create();
-
-export interface ErrorResponse {
-  detail: string;
-}
-
-export interface Token {
-  token: string;
-  refresh_token: string;
-}
-
-export const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
+const axios = Axios.create({
+  withCredentials: true,
+  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT as string,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export const axiosServer = axios.create({
-  baseURL: process.env.API_ENDPOINT,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+let isRefreshing = false;
+let refreshPromise: Promise<unknown> | null = null;
 
-const axiosSelf = axios.create({
-  baseURL: process.env.HOST,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const refreshAccessToken = async () => {
+  if (!isRefreshing) {
+    isRefreshing = true;
+    refreshPromise = axios
+      .post("/api/token/refresh", {})
+      .then((response) => {
+        // リフレッシュトークンが正常に取得された場合の処理をここに追加
+        isRefreshing = false;
+        return response;
+      })
+      .catch((error) => {
+        isRefreshing = false;
+        if (error?.response?.status === 401) {
+          window.location.href = "/";
+        }
+        throw error;
+      });
+  }
+  return refreshPromise;
+};
 
-export default axiosSelf;
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error?.response?.status === 401 && error.config.url !== "/api/token/refresh") {
+      try {
+        await refreshAccessToken();
+        // もとのリクエストを再試行
+        return await axios.request(error.config);
+      } catch (refreshError) {
+        // リフレッシュトークンの取得に失敗した場合のエラーハンドリング
+        window.location.href = "/";
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+axios.interceptors.request.use((config) => config);
+
+export default axios;

@@ -2,6 +2,7 @@ from typing import Awaitable, Callable
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.services.redis.lifetime import init_redis, shutdown_redis
 from api.settings import settings
@@ -44,6 +45,15 @@ def register_startup_event(
         app.middleware_stack = None
         _setup_db(app)
         init_redis(app)
+
+
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.web_url,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
         app.middleware_stack = app.build_middleware_stack()
         pass  # noqa: WPS420
 
