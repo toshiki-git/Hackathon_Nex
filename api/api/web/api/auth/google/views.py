@@ -1,15 +1,14 @@
 from typing import Optional
 from urllib.parse import urlencode, urljoin
 
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
 from loguru import logger
 
-from api.db.dao.token_dao import TokenDAO
+from api.db.dao.magic_link_dao import MagicLinkDAO
 from api.db.dao.user_dao import UserDAO
 from api.services.oauth import NotVerifiedEmailError, google
 from api.settings import settings
-from api.utils.response import json_err_content
 
 router = APIRouter()
 logger = logger.bind(task="GoogleAuth")
@@ -28,13 +27,11 @@ async def google_login(request: Request) -> Response:
         if settings.google_client_secret is None:
             logger.critical("Not Found Google client secret.")
 
-        return JSONResponse(
+        logger.critical("Not found client_id or client_secret for google login.")
+
+        raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=json_err_content(
-                500,
-                "Internal Server Error",
-                "client_id or client_secret not found to create URL for Google login.",
-            ),
+            detail="client_id or client_secret not found to create URL for Google login.",
         )
 
     logger.info("Success to generate login url and redirect.")
@@ -51,7 +48,7 @@ async def google_callback(
     request: Request,
     code: Optional[str] = None,
     user_dao: UserDAO = Depends(),
-    token_dao: TokenDAO = Depends(),
+    magic_link_dao: MagicLinkDAO = Depends(),
 ) -> Response:
     """Process login response from Google.
 
@@ -69,9 +66,8 @@ async def google_callback(
     """
     if code is None:
         logger.error("Google login failed")
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content=json_err_content(400, "Bad Request", "Google login faild."),
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Google login faild."
         )
 
     try:
@@ -84,13 +80,9 @@ async def google_callback(
         logger.info("Success to retrieve access token from Google API.")
     except google.FaildRetrieveAccessTokenError:
         logger.error("Failed to retrieve access token for Google login.")
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content=json_err_content(
-                400,
-                "Bad Request",
-                "Failed to retrieve the access token for Google login.",
-            ),
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve the access token for Google login.",
         )
 
     user_info = await google.get_user_info(access_token)
@@ -99,7 +91,7 @@ async def google_callback(
 
     if not user_info["verified_email"]:
         raise NotVerifiedEmailError(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Your google is not verified email address.",
         )
 
@@ -114,7 +106,7 @@ async def google_callback(
         )
         logger.info("Created new user: xxxx@{0}".format(user_email_domain))
 
-    query = {"key_token": await token_dao.create_token(user_id=user_id)}
+    query = {"seal": await magic_link_dao.create_magic_link(user_id=user_id)}
     return RedirectResponse(
         "{0}?{1}".format(
             urljoin(settings.web_url, "callback"),

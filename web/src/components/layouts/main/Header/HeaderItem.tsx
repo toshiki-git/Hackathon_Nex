@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { IconContext } from "react-icons";
 import { usePathname } from "next/navigation";
+import headerCSS from "./Header.module.scss";
 
 type MenuTabProps = {
   name: string;
@@ -21,12 +22,14 @@ const HeaderItem = ({ name, icon, url }: MenuTabProps) => {
   return (
     <Link href={url}>
       <div
-        className={`headerItem ${activateClass} select-none rounded-lg my-2 hover:bg-focus`}
+        className={`${headerCSS.headerItem} ${activateClass} select-none rounded-lg my-2 hover:bg-focus`}
       >
-        <div className="headerItem__icon flex flex-col justify-center">
+        <div className={`${headerCSS.headerItem__icon} flex flex-col justify-center`}>
           <IconContext.Provider value={fontSize}>{icon}</IconContext.Provider>
         </div>
-        <div className="headerItem__name flex flex-col justify-center font-bold px-4">
+        <div
+          className={`${headerCSS.headerItem__name} flex flex-col justify-center font-bold px-4`}
+        >
           {name}
         </div>
       </div>

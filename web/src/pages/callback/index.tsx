@@ -1,0 +1,28 @@
+import axios from "lib/axios";
+import { useEffect } from "react";
+import getLayout from "@/components/layouts";
+import { useRouter } from "next/router";
+
+const Callback = () => {
+  const router = useRouter();
+  const { query } = router;
+  useEffect(() => {
+    if (router.isReady) {
+      const { seal } = query;
+      axios
+        .post("/api/token", {
+          seal,
+        })
+        .then(() => {
+          router.replace("/home");
+        })
+        .catch(() => {
+          router.replace("/");
+        });
+    }
+  }, [router, query]);
+};
+
+Callback.getLayout = getLayout;
+
+export default Callback;
