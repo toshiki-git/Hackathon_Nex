@@ -81,7 +81,7 @@ services:
   migrator:
     container_name: app-migrator
     image: api:${API_VERSION:-latest}
-    restart: on-failure[:10]
+    restart: on-failure
     command: /app/.venv/bin/python -m alembic upgrade head
     environment:
       API_DB_HOST: api-db
