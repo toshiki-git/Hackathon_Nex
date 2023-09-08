@@ -4,7 +4,6 @@ from sqlalchemy import DateTime, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from api.db.meta import meta
-from api.static import static
 
 
 class Base(DeclarativeBase):

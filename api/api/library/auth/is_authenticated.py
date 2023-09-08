@@ -1,17 +1,19 @@
 from typing import Optional
 
-from fastapi import Depends, Header, HTTPException
+from fastapi import Cookie, Depends, Header, HTTPException
 from jose import ExpiredSignatureError, JWTError, jwt
 
 from api.db.dao.user_dao import UserDAO
+from api.library.auth.schema import AuthenticatedUser
 from api.settings import settings
-from api.web.api.users.schema import UserModelDTO
 
 
 async def is_authenticated(
-    authorization: Optional[str] = Header(default=None),
     user_dao: UserDAO = Depends(),
-) -> UserModelDTO:
+    access_token: str = Cookie(default=None),
+    session_id: str = Cookie(default=None),
+    authorization: Optional[str] = Header(default=None),
+) -> AuthenticatedUser:
     """Autheticates a user based on the provided authorization token.
 
     This function validates the provided authorization token by decofing it
@@ -29,14 +31,17 @@ async def is_authenticated(
         - 401 (Unauthorized): If the token is expired or invalid.
         - 404 (Not Found): If the user associated with the token is not found.
     """
-    if authorization is None:
+    if authorization is None and access_token is None:
         raise HTTPException(
-            status_code=400,
-            detail="Authorization header is missing.",
+            status_code=401,
+            detail="Authorization credentials is missing.",
             headers={"WWW-Authenticate": 'Bearer error="invalid_request"'},
         )
 
-    jwt_token = authorization.rsplit(maxsplit=1)[-1]
+    if authorization is not None:
+        jwt_token = authorization.rsplit(maxsplit=1)[-1]
+    else:
+        jwt_token = access_token
 
     try:
         payload = jwt.decode(
@@ -60,7 +65,10 @@ async def is_authenticated(
     user = await user_dao.get_user(payload["user_id"])
 
     if user is not None:
-        return UserModelDTO.model_validate(user)
+        authenticated_user = AuthenticatedUser.model_validate(user)
+        if session_id is not None:
+            authenticated_user.session_cert = session_id
+        return authenticated_user
 
     raise HTTPException(
         status_code=404,

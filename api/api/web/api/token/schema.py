@@ -3,13 +3,13 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class KeyTokenPostDTO(BaseModel):
+class MagicLinkPostDTO(BaseModel):
     """DTO for when generating JWT token."""
 
-    key_token: str
+    seal: str
 
 
 class JWTTokenPostDTO(BaseModel):
     """DTO for when responce JWT token."""
 
-    refresh_token: str
+    session_id: Optional[str] = None

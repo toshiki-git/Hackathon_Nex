@@ -25,10 +25,8 @@ class UserDAO:
         :param user_id: id of the user you want to get.
         :returns: if not found user, will return None.
         """
-        query = select(UserModel).where(UserModel.id == user_id)
-        rows = await self.session.execute(query)
-
-        return rows.scalar_one_or_none()
+        user = await self.session.get(UserModel, user_id)
+        return user
 
     async def get_user_by_email(self, email: str) -> Optional[UserModel]:
         """Function can get the user from user_email.
