@@ -43,7 +43,7 @@ class UserDAO:
 
         return rows.scalar_one_or_none()
 
-    async def create_user(self, username: str, email: str) -> int:
+    async def create_user(self, display_name: str, email: str) -> int:
         """Function to create a new user.
 
         :param username: username of the user you want to create (max: 50 characters)
@@ -51,14 +51,14 @@ class UserDAO:
         :raises ValueError: if the username or email maximum length is exceeded.
         :returns: if succeed to create user, will return user_id
         """
-        if len(username) > 50:
+        if len(display_name) > 50:
             logger.error("Username maximum length exceeded.")
             raise ValueError("Username length cannot exceed 50 characters")
         if len(email) > 255:
             logger.error("Email maximum length exceeded.")
             raise ValueError("Username length cannot exceed 255 characters")
 
-        user = UserModel(username=username, email=email)
+        user = UserModel(display_name=display_name, email=email)
         self.session.add(user)
         await self.session.commit()
 

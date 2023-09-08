@@ -26,7 +26,7 @@ async def jwt_verify(
     user = await user_dao.get_user(payload["user_id"])
         
     if  user is not None:
-        user_dto = UserModelDTO(id=user.id, username=user.username, email=user.email)
+        user_dto = UserModelDTO(id=user.id, display_name=user.display_name, email=user.email)
         return  user_dto
     else:
         raise HTTPException(status_code=401, detail="non existent user")
