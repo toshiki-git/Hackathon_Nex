@@ -1,4 +1,5 @@
 import React from "react";
+import postAreaCSS from "./PostArea.module.scss";
 
 interface PostProps {
   content: string;
@@ -8,7 +9,7 @@ interface PostProps {
 
 const PostDisplay: React.FC<PostProps> = ({ content, hashtags, image }) => {
   return (
-    <div className="bg-overlay p-4 rounded-md mt-4">
+    <div className={`${postAreaCSS.postArea} bg-overlay p-4 rounded-md mt-4`}>
       <div className="mb-2 text-foreground">
         <p>{hashtags}</p>
       </div>
