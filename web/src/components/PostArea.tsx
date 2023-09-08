@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
 import { BsFillImageFill } from "react-icons/bs";
+import postAreaCSS from "./PostArea.module.scss";
 
 const PostArea: React.FC = () => {
   const [content, setContent] = useState<string>("");
@@ -25,7 +26,7 @@ const PostArea: React.FC = () => {
   };
 
   return (
-    <div className="bg-overlay p-4 rounded-md">
+    <div className={`${postAreaCSS.postArea} bg-overlay p-4 rounded-md`}>
       <div className="text-xl text-foreground mb-4">投稿</div>
       <div className="flex-1 rounded-md p-1 mb-2 text-foreground placeholder-focus">
         <Textarea
