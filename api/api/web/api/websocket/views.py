@@ -6,7 +6,7 @@ logger = logger.bind(task="Token")
 router = APIRouter()
 
 # コミュニティごとのWebSocket接続を管理
-room_websockets: Dict[str, Set[WebSocket]] = {}
+room_websockets: Dict[int, Set[WebSocket]] = {}
 
 @router.websocket("/{community}")
 async def websocket_endpoint(websocket: WebSocket, community: int):
@@ -16,7 +16,6 @@ async def websocket_endpoint(websocket: WebSocket, community: int):
         room_websockets[community] = set()
 
     room_websockets[community].add(websocket)
-    print(room_websockets)
 
     try:
         while True:
@@ -27,6 +26,7 @@ async def websocket_endpoint(websocket: WebSocket, community: int):
             message = data.get("message", "")
 
             response_data = {
+                "community": community,
                 "userName": userName,
                 "message": message
             }

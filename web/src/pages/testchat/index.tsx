@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 let socket: WebSocket | null = null;
 
 export default function Home() {
@@ -7,24 +8,42 @@ export default function Home() {
   const [message, setMessage] = useState('');
   const [chatLog, setChatLog] = useState<string[]>([]);
 
-
   const connectToWebSocket = () => {
     const wsUrl = `ws://localhost:8000/api/ws/${communityID}`;
 
     socket = new WebSocket(wsUrl);
     socket.onmessage = (event) => {
-        const message = event.data;
-        console.log(event.data);
-        displayMessage(message);
-      };
+      const message = event.data;
+      console.log(event.data);
+      displayMessage(message);
+    };
 
+    //websocket接続したとき
     socket.onopen = () => {
       console.log("チャット開始");
+      //過去のデーター取得
+      fetch(`http://localhost:8000/api/community/?community_id=${communityID}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('HTTPエラー');
+        }
+        return response.json();
+      })
+      .then(data => {
+        //過去のコメント出力
+        console.log(data)
+      })
+      .catch(error => {
+        console.error('HTTP GETリクエストエラー:', error);
+      });
     };
   };
 
+  //リアルタイムチャットを送った時
   const sendMessage = () => {
-    console.log("a")
+    console.log("a");
     if (socket) {
       const dataToSend = {
         message: message,
@@ -32,6 +51,27 @@ export default function Home() {
       };
       socket.send(JSON.stringify(dataToSend));
       setMessage('');
+      
+      //チャット内容データーベースに保存
+      fetch('http://localhost:8000/api/community/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userName, 
+          community_id: communityID,
+          content: message,
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('HTTPエラー');
+        }
+      })
+      .catch(error => {
+        console.error('HTTP POSTリクエストエラー:', error);
+      });
     }
   };
 
@@ -44,14 +84,14 @@ export default function Home() {
       <input
         type="text"
         id="communityID"
-        placeholder="ルーム名"
+        placeholder="コミュニティID兼timelineModelのpost_id"
         value={communityID}
         onChange={(e) => setCommunityID(e.target.value)}
       />
       <input
         type="text"
         id="userName"
-        placeholder="ユーザー名"
+        placeholder="ユーザーID"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
       />
