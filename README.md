@@ -16,4 +16,4 @@ Docker の場合は以下のようなポート設定になっています。
 
 # 環境構築
 
-[wiki](https://github.com/geekcamp2023-vol9-team28/night_g/wiki)の手順にしたがって構築をしてください。
+[wiki](https://github.com/geekcamp2023-vol9-team28/Nex/wiki)の手順にしたがって構築をしてください。

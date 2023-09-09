@@ -32,14 +32,14 @@ services:
       API_DB_PORT: 5432
       API_DB_USER: geekcamp
       API_DB_PASS: geekcamp
-      API_DB_BASE: night_g
+      API_DB_BASE: nex
       API_REDIS_HOST: api-redis
       API_REDIS_PORT: 6379
       API_REDIS_USER: geekcamp
       API_REDIS_PASS: geekcamp
       API_REDIS_INSIGHT_PORT: 8001
       API_RELOAD: true
-      API_TOKEN_SECRET_KEY: night_g_secret_key_something
+      API_TOKEN_SECRET_KEY: nex_secret_key_something
       API_TOKEN_ALGORITHM: HS256
 
   web:
@@ -67,13 +67,13 @@ services:
     environment:
       POSTGRES_USER: geekcamp
       POSTGRES_PASSWORD: geekcamp
-      POSTGRES_DB: night_g
+      POSTGRES_DB: nex
       encoding: utf8
     volumes:
       - ./.db_data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: pg_isready -U geekcamp -d night_g
+      test: pg_isready -U geekcamp -d nex
       interval: 2s
       timeout: 3s
       retries: 40
@@ -81,14 +81,14 @@ services:
   migrator:
     container_name: app-migrator
     image: api:${API_VERSION:-latest}
-    restart: on-failure[:10]
+    restart: on-failure
     command: /app/.venv/bin/python -m alembic upgrade head
     environment:
       API_DB_HOST: api-db
       API_DB_PORT: 5432
       API_DB_USER: geekcamp
       API_DB_PASS: geekcamp
-      API_DB_BASE: night_g
+      API_DB_BASE: nex
     depends_on:
       db:
         condition: service_healthy

@@ -65,7 +65,7 @@ class Settings(BaseSettings):
 
     # token credentials
     token_algorithm: str = ""
-    token_secret_key: str = "night_g_some_secret_key"
+    token_secret_key: str = "nex_some_secret_key"
 
     @property
     def is_production(self):
