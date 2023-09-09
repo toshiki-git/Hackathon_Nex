@@ -1,6 +1,7 @@
 import React from "react";
 import { PiBalloon } from "react-icons/pi";
 import PostList from "../Post/PostList";
+import ProfCSS from "./Prof.module.scss";
 
 type ProfProps = {
   name: string;
@@ -11,7 +12,7 @@ type ProfProps = {
 
 const ProfItem = ({ name, userName, birthday, image }: ProfProps) => {
   return (
-    <div>
+    <div className={`${ProfCSS.profArea}`}>
       <div className="flex flex-col  space-y-4 pb-4 border-b-1 pt-20">
         <div className="h-20">
           <img src={image} className="rounded-full h-20" />
