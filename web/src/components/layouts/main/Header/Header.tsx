@@ -28,13 +28,6 @@ import headerCSS from "./Header.module.scss";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
 import LogoutModal from "./LogoutModal";
-<<<<<<< HEAD
-=======
-import Link from "next/link";
-import useGetMe from "@/hooks/UserMe";
-
-const { userData } = useGetMe();
->>>>>>> 4b6008bdd4deb98b348a61f87e254ed1478acb3e
 
 const headerItemList = [
   {

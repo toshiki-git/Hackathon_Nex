@@ -9,5 +9,5 @@ class UserModelDTO(BaseModel):
     username: Optional[str]
     display_name: str
     email: str
-    session_cert: Optional[str]
+    session_cert: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
