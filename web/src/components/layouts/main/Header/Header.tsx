@@ -23,6 +23,7 @@ import React from "react";
 
 import useSwitchTheme from "@/utils/theme";
 import Link from "next/link";
+import useGetMe from "@/hooks/UserMe";
 import headerCSS from "./Header.module.scss";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
@@ -70,6 +71,7 @@ const HeaderItem = () => {
 
 const Header = () => {
   const { theme } = useTheme();
+  const { userData } = useGetMe();
   const {
     isOpen: isAccountModalOpen,
     onOpen: openAccountModal,
@@ -94,12 +96,12 @@ const Header = () => {
               className={`${headerCSS.header__icon__pc} rounded-lg my-2 py-2 px-3 hover:bg-white/[.06]`}
             >
               <User
-                name="Junior Garcia"
+                name={userData.display_name}
                 classNames={{
                   wrapper: "pl-3",
                   description: "text-primary",
                 }}
-                description="@jrgarciadev"
+                description={`@${userData.username}`}
                 avatarProps={{
                   src: "https://avatars.githubusercontent.com/u/30373425?v=4",
                 }}

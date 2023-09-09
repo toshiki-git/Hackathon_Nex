@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "../../lib/axios";
+import { UserDataType } from "lib/types";
+import axios from "lib/axios";
 
 const useGetMe = () => {
-  const [userData, setUserData] = useState<{
-    id?: number;
-    username?: string;
-    email?: string;
-    session_cert?: string;
-  }>({});
+  const [userData, setUserData] = useState<UserDataType>({});
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
