@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SearchCSS from "./Search.module.scss";
 
 interface HashtagSearchProps {
   setShowResults: (value: boolean) => void;
@@ -14,7 +15,7 @@ const HashtagSearch: React.FC<HashtagSearchProps> = ({ setShowResults }) => {
   };
 
   return (
-    <div className="mb-4">
+    <div className={`${SearchCSS.hashtag}`}>
       <input
         type="text"
         value={hashtag}
@@ -22,7 +23,7 @@ const HashtagSearch: React.FC<HashtagSearchProps> = ({ setShowResults }) => {
           setHashtag(e.target.value)
         }
         placeholder="ハッシュタグで検索..."
-        className="p-2 w-4/5 border border-foreground rounded bg-overlay"
+        className={`${SearchCSS.input} p-2 border border-foreground rounded bg-overlay`}
       />
       <button
         onClick={handleSearch}
