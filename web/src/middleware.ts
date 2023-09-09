@@ -1,14 +1,12 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-type RefreshTokenResponse = {
-  access_token: string;
-};
+type SessisonIdType = string;
+type AccessTokenType = string;
 
-async function getNewAccessToken(
-  sessionId: string | undefined | void,
-): Promise<string | void> {
-  const userData = await fetch(`${process.env.API_ENDPOINT}/api/token/refresh`, {
+async function refershToken(
+  sessionId: SessisonIdType,
+): Promise<undefined | AccessTokenType> {
+  const token = await fetch(`${process.env.API_ENDPOINT}/api/token/refresh`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -17,87 +15,67 @@ async function getNewAccessToken(
     body: JSON.stringify({
       session_id: sessionId,
     }),
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        switch (res.status) {
-          case 401:
-            throw new Error("Ivalid Session id");
-          default:
-            throw new Error(res.statusText);
-        }
-      }
-      const resData: RefreshTokenResponse = await res.json();
-      const newAccessToken = resData.access_token;
+  }).then((res) => (res.ok ? res : undefined));
 
-      return newAccessToken;
-    })
-    .catch(() => ({ redirect: true }));
-  return { user_data: await userData, access_token: undefined, redirect: false };
-}
-async function getUserInfo(
-  sessionId: string | undefined | void,
-  accessToken: string | undefined | void,
-) {
-  if (accessToken === undefined) {
-    // eslint-disable-next-line no-param-reassign
-    accessToken = await getNewAccessToken(sessionId);
+  if (token !== undefined) {
+    const tokenData = await token.json();
+    return tokenData.access_token;
   }
+  return undefined;
+}
 
-  const user = await fetch(`${process.env.API_ENDPOINT}/api/auth/jwt_verify`, {
+async function checkAuth(accessToken: AccessTokenType): Promise<boolean> {
+  const isSucceeded = await fetch(`${process.env.API_ENDPOINT}/api/users/me`, {
     method: "GET",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-      return res.json();
-    })
-    .catch(() => ({ redirect: true, access_token: undefined, user_data: undefined }));
+  }).then(async (res) => res.ok);
 
-  // eslint-disable-next-line @typescript-eslint/return-await
-  return { user_data: await user, access_token: accessToken, redirect: false };
+  return isSucceeded;
 }
 
-export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  const sessionId = request.cookies.get("session_id")?.value;
-  const accessToken = request.cookies.get("access_token")?.value;
-  let newAccessToken: string | undefined | void = "";
+function redirectToLoginPage(request: NextRequest): NextResponse {
+  return NextResponse.redirect(new URL("/", request.url));
+}
 
-  const user = await getUserInfo(sessionId, accessToken).catch(async () => {
-    newAccessToken = await getNewAccessToken(sessionId);
-    try {
-      const userWithNewToken = await getUserInfo(sessionId, newAccessToken);
-      const userData = {
-        user_data: await userWithNewToken.user_data.json(),
-        access_token: newAccessToken,
-        redirect: false,
-      };
-      return userData;
-    } catch (err) {
-      return { redirect: true, access_token: undefined, user_data: undefined };
-    }
-  });
+async function middleware(request: NextRequest) {
+  const response = await NextResponse.next();
+  const sessionId: SessisonIdType | undefined =
+    request.cookies.get("session_id")?.value;
+  let accessToken: AccessTokenType | undefined =
+    request.cookies.get("access_token")?.value;
 
-  if (user.redirect) {
-    return NextResponse.redirect(new URL("/", request.url));
+  if (sessionId === undefined) {
+    return redirectToLoginPage(request);
   }
 
-  if (typeof user.access_token === "string" && user.access_token !== undefined) {
+  // If accessToken is not validated or null.
+  if (
+    accessToken === undefined ||
+    (accessToken !== undefined && !(await checkAuth(accessToken)))
+  ) {
+    accessToken = await refershToken(sessionId);
+
+    // Check the accessToken was refreshed
+    if (
+      accessToken === undefined ||
+      (accessToken !== undefined && !(await checkAuth(accessToken)))
+    ) {
+      return redirectToLoginPage(request);
+    }
     response.cookies.set({
       name: "access_token",
-      value: user.access_token,
+      value: accessToken,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       domain: request.nextUrl.domainLocale?.domain,
     });
+
+    return response;
   }
 
   return response;
@@ -106,3 +84,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/home", "/search", "/notifications", "/profile"],
 };
+
+export default middleware;

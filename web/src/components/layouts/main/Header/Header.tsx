@@ -22,11 +22,11 @@ import { useTheme } from "next-themes";
 import React from "react";
 
 import useSwitchTheme from "@/utils/theme";
+import Link from "next/link";
 import headerCSS from "./Header.module.scss";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
 import LogoutModal from "./LogoutModal";
-import Link from "next/link";
 
 const headerItemList = [
   {
@@ -39,7 +39,7 @@ const headerItemList = [
     id: 2,
     name: "通知",
     icon: <BsBellFill />,
-    url: "/notification",
+    url: "/notifications",
   },
   {
     id: 3,
@@ -115,9 +115,7 @@ const Header = () => {
         </DropdownTrigger>
         <DropdownMenu variant="faded" aria-label="Static Actions">
           <DropdownItem key="profile" startContent={<BsFillPersonFill />}>
-            <Link href="/profile">
-              プロフィール
-            </Link>
+            <Link href="/profile">プロフィール</Link>
           </DropdownItem>
           <DropdownItem
             onPress={openAccountModal}
