@@ -27,6 +27,9 @@ import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
 import LogoutModal from "./LogoutModal";
 import Link from "next/link";
+import useGetMe from "@/hooks/UserMe";
+
+const { userData } = useGetMe();
 
 const headerItemList = [
   {
@@ -94,7 +97,7 @@ const Header = () => {
               className={`${headerCSS.header__icon__pc} rounded-lg my-2 py-2 px-3 hover:bg-white/[.06]`}
             >
               <User
-                name="Junior Garcia"
+                name={userData.username}
                 classNames={{
                   wrapper: "pl-3",
                   description: "text-primary",
@@ -115,9 +118,7 @@ const Header = () => {
         </DropdownTrigger>
         <DropdownMenu variant="faded" aria-label="Static Actions">
           <DropdownItem key="profile" startContent={<BsFillPersonFill />}>
-            <Link href="/profile">
-              プロフィール
-            </Link>
+            <Link href="/profile">プロフィール</Link>
           </DropdownItem>
           <DropdownItem
             onPress={openAccountModal}
