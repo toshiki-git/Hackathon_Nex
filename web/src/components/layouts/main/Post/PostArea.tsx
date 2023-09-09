@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
 import { BsFillImageFill } from "react-icons/bs";
 import postAreaCSS from "./PostArea.module.scss";
+import axios from "lib/axios";
+import useGetMe from "@/hooks/UserMe";
 
 const PostArea: React.FC = () => {
   const [content, setContent] = useState<string>("");
@@ -9,6 +11,8 @@ const PostArea: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imagePreviewUrl = selectedImage ? URL.createObjectURL(selectedImage) : null;
+
+  const { userData } = useGetMe();
 
   const handleImageUpload = () => {
     if (fileInputRef.current) {
@@ -21,8 +25,29 @@ const PostArea: React.FC = () => {
     setSelectedImage(file);
   };
 
-  const handlePost = () => {
-    // 投稿処理をここに書く
+  const handlePost = async () => {
+    const hashtagArray = hashtags
+      .split(" ")
+      .filter((tag) => tag.startsWith("#"))
+      .map((tag) => tag.slice(1));
+
+    const requestBody = {
+      user_id: userData.id,
+      content: content,
+      image_url: imagePreviewUrl,
+      hashtags: hashtagArray,
+    };
+
+    try {
+      const res = await axios.post("/api/timiline/public/add", requestBody);
+      console.log(res);
+
+      setContent("");
+      setHashtags("");
+      setSelectedImage(null);
+    } catch (err) {
+      console.error("Error posting data:", err);
+    }
   };
 
   return (
