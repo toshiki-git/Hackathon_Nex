@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
 import { BsFillImageFill } from "react-icons/bs";
-import postAreaCSS from "./PostArea.module.scss";
 import axios from "lib/axios";
 import useGetMe from "@/hooks/UserMe";
+import postAreaCSS from "./PostArea.module.scss";
 
 const PostArea: React.FC = () => {
   const [content, setContent] = useState<string>("");
@@ -33,7 +33,7 @@ const PostArea: React.FC = () => {
 
     const requestBody = {
       user_id: userData.id,
-      content: content,
+      content,
       image_url: imagePreviewUrl,
       hashtags: hashtagArray,
     };
