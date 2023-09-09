@@ -4,7 +4,7 @@ from loguru import logger
 
 from api.db.dao.session_dao import SessionDAO
 from api.library.auth import is_authenticated
-from api.library.auth.schema import AuthenticatedUser
+from api.web.api.users.schema import UserModelDTO
 
 router = APIRouter()
 logger = logger.bind(task="Logout")
@@ -12,7 +12,7 @@ logger = logger.bind(task="Logout")
 
 @router.post("/")
 async def logout(
-    user: AuthenticatedUser = Depends(is_authenticated),
+    user: UserModelDTO = Depends(is_authenticated),
     session_dao: SessionDAO = Depends(),
 ):
     if user.session_cert is not None:
