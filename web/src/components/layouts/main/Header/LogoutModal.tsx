@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "lib/axios";
 import {
   Modal,
   ModalContent,
@@ -42,7 +43,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ isOpen, onClose }) => {
             onPress={onClose}
             onClick={async (e) => {
               e.preventDefault();
-              await fetch("/api/logout", { method: "POST" });
+              await axios.post("/api/auth/logout");
               router.push("/");
             }}
           >
