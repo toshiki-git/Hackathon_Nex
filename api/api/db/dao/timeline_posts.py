@@ -35,17 +35,21 @@ class TimelinePostsDAO:
         limit: int,
         offset: int,
     ) -> List[TimelinePostsModel]:
-        """Function to retrieve timeline posts.
+        """Function to retrieve timeline posts sorted by the latest.
 
         :param limit: Number of posts to retrieve
         :param offset: Offset of posts to retrieve
         :returns: List of model instances of post
         """
         raw_timeline = await self.session.execute(
-            select(TimelinePostsModel).limit(limit).offset(offset),
+            select(TimelinePostsModel)
+            .order_by(TimelinePostsModel.post_id.desc())  
+            .limit(limit)
+            .offset(offset),
         )
 
         return list(raw_timeline.scalars().fetchall())
+
 
     async def get_timeline_search_hashtag(
         self, hashtag: str
