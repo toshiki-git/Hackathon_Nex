@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SearchCSS from "./Search.module.scss";
 
 interface ContentSearchProps {
   setShowResults: (value: boolean) => void;
@@ -14,7 +15,7 @@ const ContentSearch: React.FC<ContentSearchProps> = ({ setShowResults }) => {
   };
 
   return (
-    <div className="mb-4">
+    <div className={`${SearchCSS.content}`}>
       <input
         type="text"
         value={content}
@@ -22,7 +23,7 @@ const ContentSearch: React.FC<ContentSearchProps> = ({ setShowResults }) => {
           setContent(e.target.value)
         }
         placeholder="内容で検索..."
-        className="p-2 w-4/5 border border-foreground rounded bg-overlay"
+        className={`${SearchCSS.input} p-2 border border-foreground rounded bg-overlay`}
       />
       <button
         onClick={handleSearch}

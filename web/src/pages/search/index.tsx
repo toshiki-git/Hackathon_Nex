@@ -5,6 +5,7 @@ import ContentSearch from "@/components/layouts/main/Search/ContentSearch";
 import HashtagSearch from "@/components/layouts/main/Search/HashtagSearch";
 import { BsSearch } from "react-icons/bs";
 import PostList from "@/components/layouts/main/Post/PostList";
+import SearchIcon from "@/components/layouts/main/Search/SearchIcon";
 
 const Search = () => {
   const [showResults, setShowResults] = useState(false);
@@ -12,9 +13,7 @@ const Search = () => {
   return (
     <>
       <LoginRequired />
-      <div className="flex items-center text-4xl font-bold text-foreground mt-6 mb-4">
-        <BsSearch className="mr-2" /> 検索
-      </div>
+      <SearchIcon />
       <HashtagSearch setShowResults={setShowResults} />
       <ContentSearch setShowResults={setShowResults} />
       {showResults && <PostList />}
