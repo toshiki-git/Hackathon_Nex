@@ -26,6 +26,7 @@ import headerCSS from "./Header.module.scss";
 import MenuTab from "./HeaderItem";
 import AccoutModal from "./AccoutModal";
 import LogoutModal from "./LogoutModal";
+import Link from "next/link";
 
 const headerItemList = [
   {
@@ -45,6 +46,12 @@ const headerItemList = [
     name: "検索",
     icon: <BsSearch />,
     url: "/search",
+  },
+  {
+    id: 4,
+    name: "プロフィール",
+    icon: <BsFillPersonFill />,
+    url: "/profile",
   },
 ];
 
@@ -108,7 +115,9 @@ const Header = () => {
         </DropdownTrigger>
         <DropdownMenu variant="faded" aria-label="Static Actions">
           <DropdownItem key="profile" startContent={<BsFillPersonFill />}>
-            プロフィール
+            <Link href="/profile">
+              プロフィール
+            </Link>
           </DropdownItem>
           <DropdownItem
             onPress={openAccountModal}
