@@ -101,7 +101,7 @@ async def google_callback(
         user_id = user.id
     else:
         user_id = await user_dao.create_user(
-            username=user_info["name"],
+            display_name=user_info["name"],
             email=user_email,
         )
         logger.info("Created new user: xxxx@{0}".format(user_email_domain))
