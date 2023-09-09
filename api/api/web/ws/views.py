@@ -36,6 +36,6 @@ async def websocket_endpoint(websocket: WebSocket, community: int):
 
     except WebSocketDisconnect:
         room_websockets[community].remove(websocket)
-        print("WebSocket接続が閉じられました") 
+        print("WebSocket接続が閉じられました")
         if not room_websockets[community]:
             del room_websockets[community]

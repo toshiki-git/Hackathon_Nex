@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 let socket: WebSocket | null = null;
 
 export default function Home() {
-  const [communityID, setCommunityID] = useState('');
-  const [userName, setUserName] = useState('');
-  const [message, setMessage] = useState('');
+  const [communityID, setCommunityID] = useState("");
+  const [userName, setUserName] = useState("");
+  const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<string[]>([]);
 
   const connectToWebSocket = () => {
-    const wsUrl = `ws://localhost:8000/api/ws/${communityID}`;
+    const wsUrl = `ws://localhost:8000/ws/${communityID}`;
 
     socket = new WebSocket(wsUrl);
     socket.onmessage = (event) => {
@@ -18,60 +18,60 @@ export default function Home() {
       displayMessage(message);
     };
 
-    //websocket接続したとき
+    // websocket接続したとき
     socket.onopen = () => {
       console.log("チャット開始");
-      //過去のデーター取得
+      // 過去のデーター取得
       fetch(`http://localhost:8000/api/community/?community_id=${communityID}`, {
-        method: 'GET',
+        method: "GET",
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('HTTPエラー');
-        }
-        return response.json();
-      })
-      .then(data => {
-        //過去のコメント出力
-        console.log(data)
-      })
-      .catch(error => {
-        console.error('HTTP GETリクエストエラー:', error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("HTTPエラー");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // 過去のコメント出力
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error("HTTP GETリクエストエラー:", error);
+        });
     };
   };
 
-  //リアルタイムチャットを送った時
+  // リアルタイムチャットを送った時
   const sendMessage = () => {
     console.log("a");
     if (socket) {
       const dataToSend = {
-        message: message,
-        userName: userName
+        message,
+        userName,
       };
       socket.send(JSON.stringify(dataToSend));
-      setMessage('');
-      
-      //チャット内容データーベースに保存
-      fetch('http://localhost:8000/api/community/', {
-        method: 'POST',
+      setMessage("");
+
+      // チャット内容データーベースに保存
+      fetch("http://localhost:8000/api/community/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: userName, 
+          user_id: userName,
           community_id: communityID,
           content: message,
         }),
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('HTTPエラー');
-        }
-      })
-      .catch(error => {
-        console.error('HTTP POSTリクエストエラー:', error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("HTTPエラー");
+          }
+        })
+        .catch((error) => {
+          console.error("HTTP POSTリクエストエラー:", error);
+        });
     }
   };
 
@@ -95,10 +95,12 @@ export default function Home() {
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
       />
-      <button id="join_room_btn" onClick={connectToWebSocket}>入室</button>
+      <button id="join_room_btn" onClick={connectToWebSocket}>
+        入室
+      </button>
 
-      <br/>
-      <br/>
+      <br />
+      <br />
 
       <input
         type="text"
@@ -107,7 +109,9 @@ export default function Home() {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
-      <button id="send_ms_btn" onClick={sendMessage}>送信</button>
+      <button id="send_ms_btn" onClick={sendMessage}>
+        送信
+      </button>
 
       <div id="chat">
         {chatLog.map((msg, index) => (
