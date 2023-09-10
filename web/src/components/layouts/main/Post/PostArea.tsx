@@ -26,10 +26,12 @@ const PostArea: React.FC = () => {
   };
 
   const handlePost = async () => {
-    const hashtagArray = hashtags
-      .split(" ")
-      .filter((tag) => tag.startsWith("#"))
-      .map((tag) => tag.slice(1));
+    if (!content.trim()) {
+      alert("投稿内容は必須です");
+      return;
+    }
+    const hashtagArray = hashtags.split(" ").filter((tag) => tag.startsWith("#"));
+    /* .map((tag) => tag.slice(1)); これをつければハッシュタグは取れる*/
 
     const requestBody = {
       user_id: userData.id,
@@ -39,8 +41,7 @@ const PostArea: React.FC = () => {
     };
 
     try {
-      const res = await axios.post("/api/timiline/public/add", requestBody);
-      console.log(res);
+      await axios.post("/api/timeline/public/add", requestBody);
 
       setContent("");
       setHashtags("");
