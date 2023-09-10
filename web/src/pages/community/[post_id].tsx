@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/router";
+import useGetMe from "@/hooks/UserMe";
+import { Chat } from "@/components/layouts/main/Chat/Chat";
 let socket: WebSocket | null = null;
 
 export default function Home() {
@@ -9,6 +11,8 @@ export default function Home() {
   const [chatLog, setChatLog] = useState<string[]>([]);
   const router = useRouter();
   const { post_id } = router.query;
+
+  const { userData } = useGetMe();
 
   const connectToWebSocket = () => {
     const wsUrl = `ws://localhost:8000/ws/${post_id}`;
@@ -23,6 +27,7 @@ export default function Home() {
     // websocket接続したとき
     socket.onopen = () => {
       console.log("チャット開始");
+      console.log(userData);
       // 過去のデーター取得
       fetch(`http://localhost:8000/api/community/?community_id=${post_id}`, {
         method: "GET",
@@ -109,7 +114,22 @@ export default function Home() {
 
       <div id="chat">
         {chatLog.map((msg, index) => (
-          <p key={index}>{msg}</p>
+          <div
+            key={index}
+            className={`message ${
+              JSON.parse(msg).userName === userData.id
+                ? "bg-blue-500 text-white rounded-tl-lg rounded-bl-lg rounded-br-lg p-2 ml-auto mb-2"
+                : "bg-overlay text-black rounded-tr-lg rounded-tl-lg rounded-br-lg p-2 mr-auto mb-2"
+            }`}
+            style={{
+              maxWidth: "80%",
+            }}
+          >
+            <span className="user-name text-foreground font-bold mb-1">
+              {`UserID: ${JSON.parse(msg).userName}`}
+            </span>
+            <div className="text text-foreground">{JSON.parse(msg).message}</div>
+          </div>
         ))}
       </div>
       <div>
