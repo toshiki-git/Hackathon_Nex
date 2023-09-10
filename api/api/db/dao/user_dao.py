@@ -1,3 +1,4 @@
+from ast import List
 from typing import Optional
 
 from fastapi import Depends
@@ -74,4 +75,5 @@ class UserDAO:
         rows = await self.session.execute(query)
         result = rows.scalar_one_or_none()
 
-        return result is not None
+        return result is not None  
+    
