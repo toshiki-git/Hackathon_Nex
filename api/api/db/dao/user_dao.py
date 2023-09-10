@@ -1,4 +1,6 @@
+from typing import Optional
 from typing import Any, Optional
+
 
 from fastapi import Depends
 from loguru import logger
@@ -74,4 +76,5 @@ class UserDAO:
         rows = await self.session.execute(query)
         result = rows.scalar_one_or_none()
 
-        return result is not None
+        return result is not None  
+    
