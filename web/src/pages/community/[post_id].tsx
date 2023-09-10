@@ -1,5 +1,6 @@
 import { useState } from "react";
-
+import { Button, Textarea } from "@nextui-org/react";
+import { useRouter } from 'next/router';
 let socket: WebSocket | null = null;
 
 export default function Home() {
@@ -7,6 +8,8 @@ export default function Home() {
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<string[]>([]);
+  const router = useRouter();
+  const { post_id } = router.query;
 
   const connectToWebSocket = () => {
     const wsUrl = `ws://localhost:8000/ws/${communityID}`;
@@ -81,6 +84,16 @@ export default function Home() {
 
   return (
     <div>
+      <div className="flex-1 rounded-md p-1 mb-2 text-foreground placeholder-focus">
+        <Textarea
+          placeholder="投稿内容"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+      </div>
+      <Button color="primary" onClick={sendMessage}>
+          投稿
+      </Button>
       <input
         type="text"
         id="communityID"
@@ -102,22 +115,16 @@ export default function Home() {
       <br />
       <br />
 
-      <input
-        type="text"
-        id="message"
-        placeholder="メッセージ"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button id="send_ms_btn" onClick={sendMessage}>
-        送信
-      </button>
-
       <div id="chat">
         {chatLog.map((msg, index) => (
           <p key={index}>{msg}</p>
         ))}
       </div>
+      <div>
+      <h1>Community Post {post_id}</h1>
+      {/* ここに投稿の詳細を表示するコードを追加 */}
+    </div>
+
     </div>
   );
 }

@@ -39,7 +39,7 @@ const PostArea: React.FC = () => {
     };
 
     try {
-      const res = await axios.post("/api/timiline/public/add", requestBody);
+      const res = await axios.post("/api/timeline/public/add", requestBody);
       console.log(res);
 
       setContent("");
