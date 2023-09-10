@@ -11,7 +11,7 @@ const Login = () => {
   }
 
   return (
-    <Card className="min-w-[22rem] mx-auto">
+    <Card className="min-w-[420px] mx-auto">
       <CardHeader>
         <h1>Login</h1>
       </CardHeader>
