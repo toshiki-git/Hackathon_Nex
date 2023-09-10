@@ -3,20 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 type SessisonIdType = string;
 type AccessTokenType = string;
 
-async function isUserInit(accessToken: AccessTokenType) {
-  const userRes = await fetch(`${process.env.API_ENDPOINT}/api/users/me`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then(async (res) => res);
-
-  const userData = await userRes.json();
-  return userData.is_initialized;
-}
-
 async function refershToken(
   sessionId: SessisonIdType,
 ): Promise<undefined | AccessTokenType> {
@@ -57,10 +43,6 @@ function redirectToLoginPage(request: NextRequest): NextResponse {
 
 function redirectToHomePage(request: NextRequest): NextResponse {
   return NextResponse.redirect(new URL("/home", request.url));
-}
-
-function redirectToWelcomePage(request: NextRequest): NextResponse {
-  return NextResponse.redirect(new URL("/welcome", request.url));
 }
 
 async function middleware(request: NextRequest) {
@@ -107,15 +89,10 @@ async function middleware(request: NextRequest) {
         domain: request.nextUrl.domainLocale?.domain,
       });
     }
-    if (accessToken !== undefined && (await !isUserInit(accessToken))) {
-      return redirectToWelcomePage(request);
-    }
+
     return response;
   }
 
-  if (accessToken !== undefined && (await !isUserInit(accessToken))) {
-    return redirectToWelcomePage(request);
-  }
   return response;
 }
 
