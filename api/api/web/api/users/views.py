@@ -1,5 +1,3 @@
-
-
 from typing import List
 from api.db.dao.user_dao import UserDAO
 from api.library.auth import is_authenticated
