@@ -13,10 +13,7 @@ const Callback = () => {
         .post("/api/token", {
           seal,
         })
-        .then(() => {
-          router.replace("/home");
-        })
-        .catch(() => {
+        .finally(() => {
           router.replace("/");
         });
     }

@@ -1,5 +1,7 @@
 import React from "react";
 import postAreaCSS from "./PostArea.module.scss";
+import { Avatar } from "@nextui-org/react";
+import useGetMe from "@/hooks/UserMe";
 
 interface PostProps {
   content: string;
@@ -8,8 +10,18 @@ interface PostProps {
 }
 
 const PostDisplay: React.FC<PostProps> = ({ content, hashtags, image }) => {
+  const { userData } = useGetMe();
   return (
     <div className={`${postAreaCSS.postDisplay} bg-overlay p-4 rounded-md mt-4`}>
+      <div className="post-header flex flex-wrap items-center pb-5">
+        <div className="post-avatar pr-4">
+          <Avatar src="https://avatars.githubusercontent.com/u/30373425?v=4" />
+        </div>
+        <div className="post-header-name flex flex-wrap items-center">
+          <h3 className="font-bold pr-4">{userData.display_name}</h3>
+          <span className="font-thin text-sm">{`@${userData.username}`}</span>
+        </div>
+      </div>
       <div className="mb-2 text-foreground">
         <p>{hashtags}</p>
       </div>

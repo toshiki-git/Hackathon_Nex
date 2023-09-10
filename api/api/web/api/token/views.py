@@ -86,7 +86,7 @@ async def generate_jwt_token(
         200: Return new JWT token.
         401: Invalid token or expired token
     """
-    if session_id is None and token_dto.session_id:
+    if session_id is None and token_dto.session_id is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Not found session_id in the request.",
