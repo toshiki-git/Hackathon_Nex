@@ -122,7 +122,6 @@ export default function Home() {
       </div>
       <div>
       <h1>Community Post {post_id}</h1>
-      {/* ここに投稿の詳細を表示するコードを追加 */}
     </div>
 
     </div>
