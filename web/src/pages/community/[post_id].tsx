@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import useGetMe from "@/hooks/UserMe";
-import { Chat } from "@/components/layouts/main/Chat/Chat";
 let socket: WebSocket | null = null;
 
 export default function Home() {
@@ -51,6 +50,7 @@ export default function Home() {
   // リアルタイムチャットを送った時
   const sendMessage = () => {
     console.log("a");
+    let userName = userData.id;
     if (socket) {
       const dataToSend = {
         message,
@@ -98,39 +98,36 @@ export default function Home() {
       <Button color="primary" onClick={sendMessage}>
         投稿
       </Button>
-      <input
-        type="text"
-        id="userName"
-        placeholder="ユーザーID"
-        value={userName}
-        onChange={(e) => setUserName(e.target.value)}
-      />
-      <button id="join_room_btn" onClick={connectToWebSocket}>
-        入室
-      </button>
+      <Button id="join_room_btn bg-blue-500" onClick={connectToWebSocket}>
+        チャット開始
+      </Button>
 
       <br />
       <br />
 
       <div id="chat">
-        {chatLog.map((msg, index) => (
-          <div
-            key={index}
-            className={`message ${
-              JSON.parse(msg).userName === userData.id
-                ? "bg-blue-500 text-white rounded-tl-lg rounded-bl-lg rounded-br-lg p-2 ml-auto mb-2"
-                : "bg-overlay text-black rounded-tr-lg rounded-tl-lg rounded-br-lg p-2 mr-auto mb-2"
-            }`}
-            style={{
-              maxWidth: "80%",
-            }}
-          >
-            <span className="user-name text-foreground font-bold mb-1">
-              {`UserID: ${JSON.parse(msg).userName}`}
-            </span>
-            <div className="text text-foreground">{JSON.parse(msg).message}</div>
-          </div>
-        ))}
+        {chatLog.map((msg, index) => {
+          const parsedMsg = JSON.parse(msg);
+          const { userName, message } = parsedMsg;
+
+          const isCurrentUser = Number(userName) === userData.id;
+          const messageStyle = isCurrentUser
+            ? "bg-blue-500 text-white shadow-md rounded-xl p-3 ml-10 my-2"
+            : "bg-gray-200 text-black shadow-md rounded-xl p-3 mr-10 my-2";
+
+          return (
+            <div
+              key={index}
+              className={`message w-3/4 mx-auto ${messageStyle}`}
+              style={{ maxWidth: "80%" }}
+            >
+              <span className="user-name text-xs font-semibold mb-1">
+                {`UserID: ${userName}`}
+              </span>
+              <div className="text">{message}</div>
+            </div>
+          );
+        })}
       </div>
       <div>
         <h1>Community Post {post_id}</h1>
