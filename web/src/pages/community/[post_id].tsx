@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 let socket: WebSocket | null = null;
 
 export default function Home() {
-  const [communityID, setCommunityID] = useState("");
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<string[]>([]);
@@ -12,7 +11,7 @@ export default function Home() {
   const { post_id } = router.query;
 
   const connectToWebSocket = () => {
-    const wsUrl = `ws://localhost:8000/ws/${communityID}`;
+    const wsUrl = `ws://localhost:8000/ws/${post_id}`;
 
     socket = new WebSocket(wsUrl);
     socket.onmessage = (event) => {
@@ -25,7 +24,7 @@ export default function Home() {
     socket.onopen = () => {
       console.log("チャット開始");
       // 過去のデーター取得
-      fetch(`http://localhost:8000/api/community/?community_id=${communityID}`, {
+      fetch(`http://localhost:8000/api/community/?community_id=${post_id}`, {
         method: "GET",
       })
         .then((response) => {
@@ -63,7 +62,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           user_id: userName,
-          community_id: communityID,
+          community_id: post_id,
           content: message,
         }),
       })
@@ -94,13 +93,6 @@ export default function Home() {
       <Button color="primary" onClick={sendMessage}>
           投稿
       </Button>
-      <input
-        type="text"
-        id="communityID"
-        placeholder="コミュニティID兼timelineModelのpost_id"
-        value={communityID}
-        onChange={(e) => setCommunityID(e.target.value)}
-      />
       <input
         type="text"
         id="userName"
