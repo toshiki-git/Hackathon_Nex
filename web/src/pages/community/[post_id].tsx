@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Textarea } from "@nextui-org/react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 let socket: WebSocket | null = null;
 
 export default function Home() {
@@ -92,7 +92,7 @@ export default function Home() {
         />
       </div>
       <Button color="primary" onClick={sendMessage}>
-          投稿
+        投稿
       </Button>
       <input
         type="text"
@@ -121,9 +121,8 @@ export default function Home() {
         ))}
       </div>
       <div>
-      <h1>Community Post {post_id}</h1>
-    </div>
-
+        <h1>Community Post {post_id}</h1>
+      </div>
     </div>
   );
 }
