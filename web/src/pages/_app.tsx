@@ -25,7 +25,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <NextUIProvider>
       <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <div className={`${notoSansJapanese.className}`}>
+        <div className={`${notoSansJapanese.className} min-h-screen`}>
           {getLayout(<Component {...pageProps} />)}
         </div>
       </NextThemesProvider>

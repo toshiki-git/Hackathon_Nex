@@ -41,6 +41,10 @@ function redirectToLoginPage(request: NextRequest): NextResponse {
   return NextResponse.redirect(new URL("/", request.url));
 }
 
+function redirectToHomePage(request: NextRequest): NextResponse {
+  return NextResponse.redirect(new URL("/home", request.url));
+}
+
 async function middleware(request: NextRequest) {
   const response = await NextResponse.next();
   const sessionId: SessisonIdType | undefined =
@@ -48,8 +52,17 @@ async function middleware(request: NextRequest) {
   let accessToken: AccessTokenType | undefined =
     request.cookies.get("access_token")?.value;
 
-  if (sessionId === undefined) {
-    return redirectToLoginPage(request);
+  if (request.nextUrl.pathname === "/" && accessToken !== undefined) {
+    if (await checkAuth(accessToken)) {
+      return redirectToHomePage(request);
+    }
+
+    if (sessionId !== undefined) {
+      accessToken = await refershToken(sessionId);
+      if (accessToken !== undefined && (await checkAuth(accessToken))) {
+        return redirectToHomePage(request);
+      }
+    }
   }
 
   // If accessToken is not validated or null.
@@ -57,23 +70,25 @@ async function middleware(request: NextRequest) {
     accessToken === undefined ||
     (accessToken !== undefined && !(await checkAuth(accessToken)))
   ) {
-    accessToken = await refershToken(sessionId);
+    if (sessionId !== undefined) {
+      accessToken = await refershToken(sessionId);
 
-    // Check the accessToken was refreshed
-    if (
-      accessToken === undefined ||
-      (accessToken !== undefined && !(await checkAuth(accessToken)))
-    ) {
-      return redirectToLoginPage(request);
+      // Check the accessToken was refreshed
+      if (
+        accessToken === undefined ||
+        (accessToken !== undefined && !(await checkAuth(accessToken)))
+      ) {
+        return redirectToLoginPage(request);
+      }
+      response.cookies.set({
+        name: "access_token",
+        value: accessToken,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        domain: request.nextUrl.domainLocale?.domain,
+      });
     }
-    response.cookies.set({
-      name: "access_token",
-      value: accessToken,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      domain: request.nextUrl.domainLocale?.domain,
-    });
 
     return response;
   }
@@ -82,7 +97,7 @@ async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/home", "/search", "/notifications", "/profile"],
+  matcher: ["/", "/home", "/search", "/notifications", "/profile"],
 };
 
 export default middleware;
